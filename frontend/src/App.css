@@ -1,0 +1,13 @@
+@theme {
+  /* 2. Yahan apni custom font family define karein */
+  --font-heritage: "Cinzel", serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heritage: "Cinzel", serif;
+  --color-primary-maroon: #641e16;
+  --color-brand-cream: #f3e6c9;
+
+  /* 3. Aap apne custom colors bhi yahi add kar sakte hain */
+  /* --color-primary-maroon: #641e16;
+    --color-accent-gold: #c5a059;*/
+}
