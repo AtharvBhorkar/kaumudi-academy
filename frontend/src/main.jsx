@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
-
+//here we are using react 18 so we have to use createRoot instead of ReactDOM.render
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ErrorBoundary>
