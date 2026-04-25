@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Cards from "./Cards";
@@ -7,12 +7,10 @@ import About from "./About";
 import Faculty from "./Faculty";
 import Mission from "./Mission";
 import Testimonials from "./Testimonials";
-import heroImg from "../../assets/wheel.webp";
+import heroVideo from "../../assets/hero-bg.mp4";
 import Typewriter from "./Typewriter";
 import SEO from "../../components/SEO";
 import StatsCard from "./StatsCard";
-
-/* ------------------ Animations ------------------ */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -37,23 +35,11 @@ const buttonTap = { scale: 0.95 };
 export default function Home() {
   const [shlokCompleted, setShlokCompleted] = useState(false);
 
-  const heroBackground = useMemo(
-    () => ({
-      backgroundImage: `
-        linear-gradient(
-          90deg,
-          rgba(118,71,59,0.94) 0%,
-          rgba(110,51,36,0.85) 45%,
-          rgba(215,67,30,0.35) 100%
-        ),
-        url(${heroImg})
-      `,
-    }),
-    [],
-  );
-
   return (
-    <main className="bg-[#f1e4c8] text-neutral-900 overflow-x-hidden">
+    <main
+      className="bg-[#f1e4c8] text-neutral-900"
+      style={{ overflowX: "hidden" }}
+    >
       <SEO
         title="Kaumudi Sanskrit Academy | Learn Sanskrit with Experts"
         description="Kaumudi Sanskrit Academy, a venture of Graphura India Private Limited, offers authentic Sanskrit learning in Paninian Grammar, Vedanta, and Kavya. Join our live online courses today."
@@ -95,45 +81,88 @@ export default function Home() {
           },
         ]}
       />
-      {/* ================= HERO ================= */}
 
+      {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         id="hero"
         aria-label="Hero Section"
-        style={heroBackground}
-        className="
-          relative w-full
-          min-h-[85vh] sm:min-h-[90vh] lg:min-h-screen
-          flex items-center justify-center
-          bg-cover bg-center overflow-hidden
-        "
+        style={{
+          position: "relative",
+          width: "100%",
+          /* dvh with vh fallback for older iOS */
+          height: "100vh",
+          height: "100dvh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",   /* ← kills white-line overflow */
+        }}
       >
-        <div className="absolute inset-0 bg-black/20" />
+        {/* Background Video — use 100% NOT 100vw to avoid scrollbar gap */}
+        <video
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+          }}
+          src={heroVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          ref={(v) => { if (v) v.playbackRate = 0.5; }}
+        />
 
-        {/* Container */}
+        {/* Dark overlay */}
         <div
-          className="
-          relative z-10
-          w-full max-w-7xl
-          px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20
-          pt-24 sm:pt-28 lg:pt-32
-          pb-16 sm:pb-20
-          flex flex-col items-center text-center
-        "
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.40)",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Warm colour overlay */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 2,
+            background:
+              "linear-gradient(90deg,rgba(118,71,59,0.35) 0%,rgba(110,51,36,0.2) 45%,rgba(0,0,0,0.1) 100%)",
+          }}
+        />
+
+        {/* Content */}
+        <div
+          className="relative z-10 w-full max-w-7xl flex flex-col items-center text-center"
+          style={{
+            /* Safe padding for notched phones */
+            paddingTop: "max(80px, env(safe-area-inset-top, 80px))",
+            paddingBottom: "max(40px, env(safe-area-inset-bottom, 40px))",
+            paddingLeft: "clamp(16px, 5vw, 80px)",
+            paddingRight: "clamp(16px, 5vw, 80px)",
+            /* Let content shrink instead of overflowing */
+            boxSizing: "border-box",
+          }}
         >
-          {/* Sanskrit Verse */}
-          <div className="min-h-[110px] sm:min-h-[140px] md:min-h-[170px] flex items-center justify-center">
+          {/* Shlok typewriter */}
+          <div
+            className="flex items-center justify-center w-full"
+            style={{ minHeight: "clamp(80px, 18vw, 170px)" }}
+          >
             <h1
-              className="
-              font-serif font-black
-              text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl
-              leading-relaxed tracking-wide
-              text-[#d6b15c] whitespace-pre-line
-            "
+              className="font-serif font-black leading-relaxed tracking-wide text-[#d6b15c] whitespace-pre-line drop-shadow-lg"
+              style={{ fontSize: "clamp(14px, 3.5vw, 44px)" }}
             >
               <Typewriter
-                text={`असतो मा सद्गमय, तमसो मा ज्योतिर्गमय ।
-मृत्योर्मा अमृतं गमय ॥`}
+                text={`ज्ञानं मे लेख्यतां देव, बुद्धिर्मे दीयतां सदा ।\nव्यासवाक्यप्रकाशेन, मार्गो मे दर्श्यतां सदा ॥`}
                 speed={60}
                 startDelay={400}
                 onComplete={() => setShlokCompleted(true)}
@@ -141,7 +170,6 @@ export default function Home() {
             </h1>
           </div>
 
-          {/* Revealed Content */}
           <motion.div
             custom={0.2}
             variants={fadeUp}
@@ -149,30 +177,36 @@ export default function Home() {
             animate={shlokCompleted ? "visible" : "hidden"}
             className="flex flex-col items-center w-full"
           >
-            <div className="w-24 sm:w-32 h-[3px] bg-[#d6b15c] mb-8 sm:mb-12 rounded-full" />
+            {/* Divider */}
+            <div
+              className="bg-[#d6b15c] rounded-full"
+              style={{
+                width: "clamp(60px, 10vw, 128px)",
+                height: "3px",
+                marginBottom: "clamp(20px, 5vw, 48px)",
+              }}
+            />
 
+            {/* Heading */}
             <motion.h2
               custom={0.3}
               variants={fadeUp}
-              className="
-                font-extrabold tracking-wide text-white
-                text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl
-              "
+              className="font-extrabold tracking-wide text-white drop-shadow-xl"
+              style={{ fontSize: "clamp(20px, 5vw, 60px)" }}
             >
               Rediscover the Power of{" "}
               <span className="text-[#d6b15c] font-serif italic">Sanskrit</span>
             </motion.h2>
 
+            {/* Sub-text */}
             <motion.p
               custom={0.4}
               variants={fadeUp}
-              className="
-                mt-5 sm:mt-6
-                max-w-3xl lg:max-w-4xl
-                font-serif text-white/95
-                text-sm sm:text-base md:text-lg lg:text-xl
-                leading-relaxed
-              "
+              className="font-serif text-white/95 leading-relaxed drop-shadow-md max-w-3xl lg:max-w-4xl"
+              style={{
+                fontSize: "clamp(13px, 2vw, 20px)",
+                marginTop: "clamp(12px, 3vw, 24px)",
+              }}
             >
               Immerse yourself in the profound heritage of classical Sanskrit
               through our curated traditional and modern learning programs.
@@ -182,27 +216,21 @@ export default function Home() {
             <motion.div
               custom={0.5}
               variants={fadeUp}
-              className="
-                mt-10 sm:mt-14
-                flex flex-col sm:flex-row
-                items-center justify-center
-                gap-5 sm:gap-8 w-full
-              "
+              className="flex flex-col sm:flex-row items-center justify-center w-full"
+              style={{
+                gap: "clamp(12px, 3vw, 32px)",
+                marginTop: "clamp(24px, 5vw, 56px)",
+              }}
             >
               <Link to="/allcourses" className="w-full sm:w-auto">
                 <motion.span
                   whileHover={buttonHover}
                   whileTap={buttonTap}
-                  className="
-                    w-full sm:w-auto
-                    inline-flex items-center justify-center
-                    px-7 sm:px-9 py-3 sm:py-4
-                    rounded-full
-                    bg-[#d6b15c] text-[#74271E]
-                    font-bold
-                    text-sm sm:text-base md:text-lg
-                    shadow-xl transition
-                  "
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-[#d6b15c] text-[#74271E] font-bold shadow-xl cursor-pointer"
+                  style={{
+                    padding: "clamp(10px, 2vw, 16px) clamp(24px, 5vw, 36px)",
+                    fontSize: "clamp(13px, 2vw, 18px)",
+                  }}
                 >
                   Explore Courses
                 </motion.span>
@@ -212,17 +240,11 @@ export default function Home() {
                 <motion.span
                   whileHover={buttonHover}
                   whileTap={buttonTap}
-                  className="
-                    w-full sm:w-auto
-                    inline-flex items-center justify-center
-                    px-7 sm:px-9 py-3 sm:py-4
-                    rounded-full
-                    border border-white/30
-                    bg-white/10 backdrop-blur-md
-                    text-white font-bold
-                    text-sm sm:text-base md:text-lg
-                    shadow-lg transition
-                  "
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 backdrop-blur-md text-white font-bold shadow-lg cursor-pointer"
+                  style={{
+                    padding: "clamp(10px, 2vw, 16px) clamp(24px, 5vw, 36px)",
+                    fontSize: "clamp(13px, 2vw, 18px)",
+                  }}
                 >
                   Contact Academy
                 </motion.span>
@@ -232,9 +254,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= MAIN SECTIONS ================= */}
-
-      <section className="space-y-12 sm:space-y-16 lg:space-y-20">
+      {/* ─── REST OF PAGE ───────────────────────────────────────── */}
+      <section className="space-y-12 sm:space-y-16 lg:space-y-10">
         <StatsCard />
         <Cards />
         <Learning />
