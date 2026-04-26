@@ -111,29 +111,30 @@ const FeaturedCard = ({ data, index }) => {
 
       {/* CTA */}
       <div className="relative z-10 mt-6">
-        <button
+        <Link to={`/coursedetail/1`}>  <button
           className="group/btn w-full flex items-center justify-between rounded-2xl px-4 py-5 font-medium transition-all hover:brightness-110 active:scale-95"
           style={{
             color: "#F2E6D9",
             background: `
-    linear-gradient(145deg, #a65a36, #7a3e22),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255,255,255,0.04) 0px,
-      rgba(255,255,255,0.04) 2px,
-      transparent 2px,
-      transparent 6px
-    )
-  `,
+        linear-gradient(145deg, #a65a36, #7a3e22),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,0.04) 0px,
+          rgba(255,255,255,0.04) 2px,
+          transparent 2px,
+          transparent 6px
+        )
+      `,
             boxShadow: `
-    inset 0 2px 4px rgba(255,255,255,0.15),
-    inset 0 -3px 6px rgba(0,0,0,0.4),
-    6px 8px 18px rgba(90,54,38,0.5)
-  `
+        inset 0 2px 4px rgba(255,255,255,0.15),
+        inset 0 -3px 6px rgba(0,0,0,0.4),
+        6px 8px 18px rgba(90,54,38,0.5)
+      `
           }}>
           <span>Explore course</span>
           <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
         </button>
+        </Link>
       </div>
     </motion.article>
   );

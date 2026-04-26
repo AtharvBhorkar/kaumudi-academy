@@ -11,7 +11,6 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import CookiePolicy from "./pages/CookiePolicy.jsx";
-
 // ================= AUTH =================
 import Sign from "./component/Auth/loginSignup";
 import RequireAuth from "./components/RequireAuth";
