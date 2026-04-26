@@ -175,12 +175,12 @@ const Faculty = () => {
                       <div
                         className="pointer-events-none absolute inset-0 rounded-full"
                         style={{
-                          background: "radial-gradient(circle at 30% 25%, rgba(255,255,255,0.5), transparent 55%)",
+                          background: "radial-gradient(circle at 30% 25%, rgba(255,255,255,0.15), transparent 60%)"
                         }}
                       />
                     </div>
                   </div>
-                </div>  
+                </div>
                 {/* Name */}
                 <h4
                   className="font-serif text-lg font-bold sm:text-xl transition-colors duration-300 group-hover:text-[#B86A45]"
@@ -206,10 +206,10 @@ const Faculty = () => {
                   >
                     <div
                       className="h-full rounded-full transition-opacity duration-300"
-                      style={{ 
+                      style={{
                         background: "linear-gradient(90deg, #D19A5B, #B86A45)",
                         width: "100%",
-                        opacity: 0.6 
+                        opacity: 0.6
                       }}
                     />
                   </div>

@@ -294,7 +294,7 @@ export default function Testimonials() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.15, duration: 0.6 }}
-                      className="flex flex-col items-center md:items-start md:pl-2"
+                      className="flex flex-col items-center"
                     >
                       {/* Avatar with nested neumorphic rings */}
                       <motion.div
@@ -350,7 +350,7 @@ export default function Testimonials() {
                       </motion.div>
 
                       {/* Name, role, stars */}
-                      <div className="mt-6 text-center md:text-left">
+                      <div className="mt-6 text-center">
                         <h3
                           className="font-serif text-2xl font-extrabold"
                           style={{ color: "var(--chocolate)" }}
@@ -363,7 +363,7 @@ export default function Testimonials() {
                         >
                           {active.role}
                         </p>
-                        <div className="mt-4">
+                        <div className="mt-4 flex justify-center">
                           <Stars rating={active.rating} />
                         </div>
                       </div>
