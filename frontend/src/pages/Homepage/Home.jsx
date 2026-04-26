@@ -216,13 +216,13 @@ export default function Home() {
             <motion.div
               custom={0.5}
               variants={fadeUp}
-              className="flex flex-col sm:flex-row items-center justify-center w-full"
+              className="flex flex-row items-center justify-center w-full flex-wrap"
               style={{
                 gap: "clamp(12px, 3vw, 32px)",
                 marginTop: "clamp(24px, 5vw, 56px)",
               }}
             >
-              <Link to="/allcourses" className="w-full sm:w-auto">
+              <Link to="/allcourses" className="w-auto">
                 <motion.span
                   whileHover={buttonHover}
                   whileTap={buttonTap}
@@ -236,7 +236,7 @@ export default function Home() {
                 </motion.span>
               </Link>
 
-              <Link to="/contact" className="w-full sm:w-auto">
+              <Link to="/contact" className="w-auto">
                 <motion.span
                   whileHover={buttonHover}
                   whileTap={buttonTap}

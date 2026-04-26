@@ -26,25 +26,25 @@ const features = [
   {
     title: "Scholarly Heritage",
     desc: "Preserving centuries of linguistic excellence through verified oral and written lineages.",
-    icon: <IoHome size={18} />,
+    icon: <IoHome className="w-5 h-5" />,
     variant: "dark", // dark card style
   },
   {
     title: "Authentic Pedagogy",
     desc: "Traditional methods tailored for modern cognitive learning styles.",
-    icon: <RiGraduationCapFill size={18} />,
+    icon: <RiGraduationCapFill className="w-5 h-5" />,
     variant: "dark",
   },
   {
     title: "Global Community",
     desc: "Connecting Sanskrit enthusiasts across 50+ countries via digital platforms.",
-    icon: <BsGlobe size={18} />,
+    icon: <BsGlobe className="w-5 h-5" />,
     variant: "cream", // cream rotated card
   },
   {
     title: "Rich Archive",
     desc: "Access to rare manuscripts and curated digital study materials.",
-    icon: <IoIosPaper size={18} />,
+    icon: <IoIosPaper className="w-5 h-5" />,
     variant: "terra", // terracotta rotated card
   },
 ];
@@ -186,40 +186,36 @@ export default function Mission() {
                     variants={fadeUp}
                     whileHover={{ y: -6, scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 280, damping: 22 }}
-                    className="relative rounded-[26px] p-5"
+                    className="relative rounded-[26px] p-5 min-h-[220px] flex flex-col justify-between overflow-hidden"
                     style={{
                       background: isCream
                         ? "linear-gradient(145deg, oklch(0.88 0.04 72), oklch(0.78 0.055 65))"
                         : isTerra
-                        ? "linear-gradient(145deg, oklch(0.52 0.12 42), oklch(0.38 0.1 38))"
-                        : "linear-gradient(145deg, oklch(0.32 0.042 42), oklch(0.26 0.038 40))",
+                          ? "linear-gradient(145deg, oklch(0.52 0.12 42), oklch(0.38 0.1 38))"
+                          : "linear-gradient(145deg, oklch(0.32 0.042 42), oklch(0.26 0.038 40))",
                       boxShadow: isCream
                         ? "-10px -10px 24px oklch(0.45 0.05 55 / 0.18), 16px 18px 36px oklch(0.05 0.012 35 / 0.75), inset 2px 2px 4px oklch(1 0 0 / 0.6), inset -2px -2px 4px oklch(0.6 0.05 60 / 0.2)"
                         : isTerra
-                        ? "-10px -10px 24px oklch(0.5 0.08 55 / 0.2), 16px 18px 36px oklch(0.05 0.012 35 / 0.75), inset 2px 2px 4px oklch(0.78 0.13 50 / 0.5), inset -2px -2px 4px oklch(0.2 0.05 40 / 0.4)"
-                        : "-8px -8px 20px oklch(0.45 0.05 55 / 0.15), 12px 14px 30px oklch(0.05 0.012 35 / 0.8), inset 2px 2px 4px oklch(0.5 0.06 60 / 0.12), inset -2px -2px 4px oklch(0.05 0.012 35 / 0.5)",
-                      transform: isCream
-                        ? "rotate(-2deg)"
-                        : isTerra
-                        ? "rotate(2deg)"
-                        : "none",
-                      marginTop: isTerra ? "20px" : "0",
+                          ? "-10px -10px 24px oklch(0.5 0.08 55 / 0.2), 16px 18px 36px oklch(0.05 0.012 35 / 0.75), inset 2px 2px 4px oklch(0.78 0.13 50 / 0.5), inset -2px -2px 4px oklch(0.2 0.05 40 / 0.4)"
+                          : "-8px -8px 20px oklch(0.45 0.05 55 / 0.15), 12px 14px 30px oklch(0.05 0.012 35 / 0.8), inset 2px 2px 4px oklch(0.5 0.06 60 / 0.12), inset -2px -2px 4px oklch(0.05 0.012 35 / 0.5)",
+                      transform: "none",
+                      marginTop: "0",
                     }}
                   >
                     {/* Icon */}
                     <div
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl mb-4"
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl mb-4 flex-shrink-0"
                       style={{
                         background: isCream
                           ? "linear-gradient(145deg, oklch(0.55 0.1 58), oklch(0.38 0.07 48))"
                           : isTerra
-                          ? "linear-gradient(145deg, oklch(0.94 0.028 75), oklch(0.78 0.05 65))"
-                          : "linear-gradient(145deg, oklch(0.55 0.1 58), oklch(0.38 0.07 48))",
+                            ? "linear-gradient(145deg, oklch(0.94 0.028 75), oklch(0.78 0.05 65))"
+                            : "linear-gradient(145deg, oklch(0.55 0.1 58), oklch(0.38 0.07 48))",
                         boxShadow: isCream
                           ? "-3px -3px 8px oklch(0.5 0.07 58 / 0.3), 5px 5px 12px oklch(0.05 0.012 35 / 0.65), inset 1px 1px 2px oklch(0.75 0.1 62 / 0.4)"
                           : isTerra
-                          ? "-3px -3px 8px oklch(0.7 0.12 55 / 0.4), 5px 5px 12px oklch(0.15 0.03 38 / 0.6), inset 1px 1px 2px oklch(1 0 0 / 0.6)"
-                          : "-4px -4px 10px oklch(0.5 0.07 58 / 0.3), 6px 6px 14px oklch(0.05 0.012 35 / 0.7), inset 1px 1px 2px oklch(0.75 0.1 62 / 0.4)",
+                            ? "-3px -3px 8px oklch(0.7 0.12 55 / 0.4), 5px 5px 12px oklch(0.15 0.03 38 / 0.6), inset 1px 1px 2px oklch(1 0 0 / 0.6)"
+                            : "-4px -4px 10px oklch(0.5 0.07 58 / 0.3), 6px 6px 14px oklch(0.05 0.012 35 / 0.7), inset 1px 1px 2px oklch(0.75 0.1 62 / 0.4)",
                         color: isTerra
                           ? "oklch(0.5 0.115 42)"
                           : "oklch(0.96 0.025 75)",
@@ -239,13 +235,13 @@ export default function Mission() {
                       {title}
                     </h3>
                     <p
-                      className="mt-1.5 text-[13px] leading-relaxed"
+                      className="mt-1.5 text-[13px] leading-relaxed line-clamp-3"
                       style={{
                         color: isCream
                           ? "oklch(0.45 0.04 45)"
                           : isTerra
-                          ? "oklch(0.9 0.03 70)"
-                          : "oklch(0.82 0.025 70)",
+                            ? "oklch(0.9 0.03 70)"
+                            : "oklch(0.82 0.025 70)",
                       }}
                     >
                       {desc}
@@ -258,8 +254,8 @@ export default function Mission() {
                         background: isCream
                           ? "linear-gradient(90deg, oklch(0.55 0.1 50), transparent)"
                           : isTerra
-                          ? "linear-gradient(90deg, oklch(0.92 0.025 75), transparent)"
-                          : "linear-gradient(90deg, oklch(0.52 0.12 42), transparent)",
+                            ? "linear-gradient(90deg, oklch(0.92 0.025 75), transparent)"
+                            : "linear-gradient(90deg, oklch(0.52 0.12 42), transparent)",
                       }}
                     />
                   </motion.div>

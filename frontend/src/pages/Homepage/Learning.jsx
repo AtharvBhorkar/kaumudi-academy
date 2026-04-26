@@ -311,7 +311,7 @@ const Learning = () => {
               <motion.div
                 whileHover={{ y: -6, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 280, damping: 22 }}
-                className="relative flex-1 rounded-[26px] p-6 -rotate-2"
+                className="relative flex-1 rounded-[26px] p-6 h-[220px] flex flex-col justify-between"
                 style={{
                   background:
                     "linear-gradient(145deg, oklch(0.88 0.04 72), oklch(0.78 0.055 65))",
@@ -349,7 +349,7 @@ const Learning = () => {
               <motion.div
                 whileHover={{ y: -6, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 280, damping: 22 }}
-                className="relative flex-1 rounded-[26px] p-6 rotate-2 mt-6"
+                className="relative flex-1 rounded-[26px] p-6 h-[220px] flex flex-col justify-between"
                 style={{
                   background:
                     "linear-gradient(145deg, oklch(0.52 0.12 42), oklch(0.38 0.1 38))",
