@@ -1,6 +1,3 @@
-/////////////////Faculty.jsx
-
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, GraduationCap, Award, ScrollText } from "lucide-react";
@@ -29,26 +26,17 @@ const FacultyPage = () => {
         </svg>
       ),
     },
-  {
-  name: "Acharya Meera Iyer",
-  role: "Dean · Vedic Studies",
-  image: faculty2,
-  bio: "Specializes in Rigveda Bhashya and Advaita Vedanta.",
-  subjectIcon: (
-    <svg width="18" height="18" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <text
-        x="50"
-        y="78"
-        textAnchor="middle"
-        fontSize="72"
-        fontFamily="serif"
-        fill="#d6b15c"
-      >
-        ॐ
-      </text>
-    </svg>
-  ),
-},
+    {
+      name: "Acharya Meera Iyer",
+      role: "Dean · Vedic Studies",
+      image: faculty2,
+      bio: "Specializes in Rigveda Bhashya and Advaita Vedanta.",
+      subjectIcon: (
+        <svg width="18" height="18" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="50" y="78" textAnchor="middle" fontSize="72" fontFamily="serif" fill="#d6b15c">ॐ</text>
+        </svg>
+      ),
+    },
     {
       name: "Pandit Rajiv Misra",
       role: "Senior Lecturer · Sahitya",
@@ -83,17 +71,17 @@ const FacultyPage = () => {
       ),
     },
     {
-  name: "Prof. Rahul Dev",
-  role: "Expert · Epigraphy",
-  image: faculty6,
-  bio: "Unlocking history through inscriptions.",
-  subjectIcon: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d6b15c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 20h9"/>
-      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-    </svg>
-  ),
-},
+      name: "Prof. Rahul Dev",
+      role: "Expert · Epigraphy",
+      image: faculty6,
+      bio: "Unlocking history through inscriptions.",
+      subjectIcon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d6b15c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      ),
+    },
   ];
 
   const seo = (
@@ -227,7 +215,16 @@ const FacultyPage = () => {
       `}</style>
 
       {/* ───────────── HERO ───────────── */}
-      <section className="relative min-h-[90vh] flex items-center justify-center text-center overflow-hidden">
+      {/* 
+        KEY CHANGE: 
+        - Changed min-h-[90vh] → h-screen (exact full viewport height, no cut)
+        - Added w-screen to video and overlays to guarantee full width
+        - Used h-full on inner motion div so content stays centered in full height
+      */}
+      <section
+        className="relative h-screen w-full flex items-center justify-center text-center overflow-hidden"
+      >
+        {/* Background Video — covers exactly 100vh × 100vw */}
         <video
           autoPlay
           loop
@@ -239,10 +236,13 @@ const FacultyPage = () => {
           <source src={heroBgVideo} type="video/mp4" />
         </video>
 
+        {/* Dark colour overlay */}
         <div
           className="absolute inset-0"
           style={{ backgroundColor: "#5a3626", opacity: 0.2, zIndex: 1 }}
         />
+
+        {/* Radial vignette overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -252,6 +252,7 @@ const FacultyPage = () => {
           }}
         />
 
+        {/* Ambient glow orbs */}
         <motion.div
           animate={{ scale: [1, 1.22, 1], opacity: [0.14, 0.26, 0.14] }}
           transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
@@ -283,6 +284,7 @@ const FacultyPage = () => {
           style={{ zIndex: 2, top: "15%", right: "10%", background: "radial-gradient(circle, rgba(255,220,120,0.20) 0%, transparent 70%)", filter: "blur(14px)" }}
         />
 
+        {/* Hero Content */}
         <motion.div
           initial={{ opacity: 0, y: 45 }}
           animate={{ opacity: 1, y: 0 }}
@@ -426,14 +428,12 @@ const FacultyPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            {/* Badge */}
             <div className="flex items-center justify-center gap-3 mb-4">
               <svg width="55" height="8" viewBox="0 0 55 8" fill="none"><line x1="0" y1="4" x2="55" y2="4" stroke="#b8862a" strokeWidth="1.5"/></svg>
               <span className="uppercase tracking-[0.35em] text-xs font-bold whitespace-nowrap" style={{ color: "#b8862a" }}>Meet the Acharyas</span>
               <svg width="55" height="8" viewBox="0 0 55 8" fill="none"><line x1="0" y1="4" x2="55" y2="4" stroke="#b8862a" strokeWidth="1.5"/></svg>
             </div>
 
-            {/* Main heading */}
             <h2
               className="font-serif text-4xl md:text-5xl font-extrabold mb-5"
               style={{
@@ -447,7 +447,6 @@ const FacultyPage = () => {
               Our Guidance
             </h2>
 
-            {/* Decorative divider */}
             <div className="flex items-center justify-center gap-2 mb-6">
               <svg width="60" height="10" viewBox="0 0 60 10" fill="none">
                 <line x1="0" y1="5" x2="52" y2="5" stroke="#b8862a" strokeWidth="1.8" opacity="0.8"/>
@@ -463,7 +462,6 @@ const FacultyPage = () => {
               </svg>
             </div>
 
-            {/* Description */}
             <p className="text-base md:text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: "rgba(100, 65, 20, 0.80)" }}>
               Our Acharyas carry forward centuries of unbroken{" "}
               <span className="italic" style={{ color: "#b8862a" }}>parampara</span>, blending
@@ -491,17 +489,16 @@ const FacultyPage = () => {
                 }}
               >
                 {/* Image area */}
-<div
-  className="relative overflow-hidden w-full p-2"
-  style={{ aspectRatio: "4/3" }}
->
-  <img
-    src={member.image}
-    alt={member.name}
-    className="faculty-img w-full h-full object-cover object-top"
-    style={{ borderRadius: 16 }}
-  />
-                  {/* Dark gradient vignette at bottom */}
+                <div
+                  className="relative overflow-hidden w-full p-2"
+                  style={{ aspectRatio: "4/3" }}
+                >
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="faculty-img w-full h-full object-cover object-top"
+                    style={{ borderRadius: 16 }}
+                  />
                   <div
                     className="absolute inset-0"
                     style={{
@@ -509,7 +506,6 @@ const FacultyPage = () => {
                       zIndex: 1,
                     }}
                   />
-                  {/* Top-right subject icon badge */}
                   <div
                     className="absolute top-3 right-3 flex items-center justify-center rounded-full"
                     style={{
@@ -526,114 +522,107 @@ const FacultyPage = () => {
                     {member.subjectIcon}
                   </div>
                 </div>
-{/* Content area */}
-<div
-  className="flex flex-col flex-1 px-6 pt-5 pb-5"
-  style={{
-    backgroundImage: i === 0
-      ? "url('https://i.pinimg.com/736x/69/0c/c6/690cc6c88f55338fa4d3eae5d0067259.jpg')"
-      : i === 1
-      ? "url('https://i.pinimg.com/1200x/1d/1c/53/1d1c53e1da00e4e474e75be2c2d90cbf.jpg')"
-      : i === 2
-      ? "url('https://i.pinimg.com/736x/5a/55/d9/5a55d94c0894a02fd5c2e0ea2934f19a.jpg')"
-      : i === 3
-      ? "url('https://i.pinimg.com/474x/dd/c2/fb/ddc2fb20e28f3ddbdd31b782042e6bc1.jpg')"
-      : i === 4
-      ? "url('https://i.pinimg.com/474x/36/1d/ed/361ded87fb2b22c0ab479099f463cec4.jpg')"
-      : i === 5
-      ? "url('https://i.pinimg.com/474x/fc/91/a9/fc91a942d7250db3a55a70069023cdc6.jpg')"
-      : "none",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    position: "relative",
-  }}
->
-  {/* overlay for opacity control */}
-  {(i === 0 || i === 1 || i === 2 || i === 3 || i === 4 || i === 5) && (
-    <div style={{
-      position: "absolute",
-      inset: 0,
-      background: "rgba(255, 248, 235, 0.55)",
-      zIndex: 0,
-    }} />
-  )}
-  {/* Name */}
-  <h3
-    className="font-serif text-xl font-bold mb-1"
-    style={{ color: "#3d1e0a", position: "relative", zIndex: 1 }}
-  >
-    {member.name}
-  </h3>
 
-  {/* Role */}
-  <p
-    className="text-xs font-bold uppercase mb-3"
-    style={{ color: "#d19a5b", letterSpacing: "0.18em", position: "relative", zIndex: 1 }}
-  >
-    {member.role}
-  </p>
+                {/* Content area */}
+                <div
+                  className="flex flex-col flex-1 px-6 pt-5 pb-5"
+                  style={{
+                    backgroundImage: i === 0
+                      ? "url('https://i.pinimg.com/736x/69/0c/c6/690cc6c88f55338fa4d3eae5d0067259.jpg')"
+                      : i === 1
+                      ? "url('https://i.pinimg.com/1200x/1d/1c/53/1d1c53e1da00e4e474e75be2c2d90cbf.jpg')"
+                      : i === 2
+                      ? "url('https://i.pinimg.com/736x/5a/55/d9/5a55d94c0894a02fd5c2e0ea2934f19a.jpg')"
+                      : i === 3
+                      ? "url('https://i.pinimg.com/474x/dd/c2/fb/ddc2fb20e28f3ddbdd31b782042e6bc1.jpg')"
+                      : i === 4
+                      ? "url('https://i.pinimg.com/474x/36/1d/ed/361ded87fb2b22c0ab479099f463cec4.jpg')"
+                      : "url('https://i.pinimg.com/474x/fc/91/a9/fc91a942d7250db3a55a70069023cdc6.jpg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    position: "relative",
+                  }}
+                >
+                  {/* Overlay */}
+                  <div style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "rgba(255, 248, 235, 0.55)",
+                    zIndex: 0,
+                  }} />
 
-  {/* Bio */}
-  <p
-    className="text-sm leading-relaxed flex-1"
-    style={{ color: "rgba(80, 45, 15, 0.75)", position: "relative", zIndex: 1 }}
-  >
-    {member.bio}
-  </p>
+                  <h3
+                    className="font-serif text-xl font-bold mb-1"
+                    style={{ color: "#3d1e0a", position: "relative", zIndex: 1 }}
+                  >
+                    {member.name}
+                  </h3>
 
-  {/* Glowing dot divider */}
-  <div className="flex items-center my-4" style={{ position: "relative", zIndex: 1 }}>
-    <div className="flex-1 h-px" style={{ background: "#5a3626" }} />
-    <div
-      className="mx-2 w-2 h-2 rounded-full"
-      style={{
-        background: "#b8862a",
-        boxShadow: "0 0 8px rgba(184,134,42,0.6), 0 0 16px rgba(184,134,42,0.3)",
-      }}
-    />
-    <div className="flex-1 h-px" style={{ background: "#5a3626" }} />
-  </div>
+                  <p
+                    className="text-xs font-bold uppercase mb-3"
+                    style={{ color: "#d19a5b", letterSpacing: "0.18em", position: "relative", zIndex: 1 }}
+                  >
+                    {member.role}
+                  </p>
 
-  {/* Bottom action icons */}
-  <div className="flex gap-4 items-center" style={{ position: "relative", zIndex: 1 }}>
-    <Link to="/allcourses">
-      <motion.div
-        className="action-icon-btn"
-        whileHover={{ rotate: -12, scale: 1.2 }}
-        transition={{ type: "spring", stiffness: 300, damping: 15 }}
-        style={{ color: "#a46a3f" }}
-        title="Explore Courses"
-      >
-        <BookOpen size={18} />
-      </motion.div>
-    </Link>
+                  <p
+                    className="text-sm leading-relaxed flex-1"
+                    style={{ color: "rgba(80, 45, 15, 0.75)", position: "relative", zIndex: 1 }}
+                  >
+                    {member.bio}
+                  </p>
 
-    <motion.div
-      className="action-icon-btn"
-      whileHover={{ rotate: -12, scale: 1.2 }}
-      transition={{ type: "spring", stiffness: 300, damping: 15 }}
-      style={{ color: "#a46a3f" }}
-      title="Faculty Profile"
-    >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-      </svg>
-    </motion.div>
+                  <div className="flex items-center my-4" style={{ position: "relative", zIndex: 1 }}>
+                    <div className="flex-1 h-px" style={{ background: "#5a3626" }} />
+                    <div
+                      className="mx-2 w-2 h-2 rounded-full"
+                      style={{
+                        background: "#b8862a",
+                        boxShadow: "0 0 8px rgba(184,134,42,0.6), 0 0 16px rgba(184,134,42,0.3)",
+                      }}
+                    />
+                    <div className="flex-1 h-px" style={{ background: "#5a3626" }} />
+                  </div>
 
-    <Link to="/auth">
-      <motion.div
-        className="action-icon-btn"
-        whileHover={{ rotate: -12, scale: 1.2 }}
-        transition={{ type: "spring", stiffness: 300, damping: 15 }}
-        style={{ color: "#a46a3f" }}
-        title="Student Login"
-      >
-        <ScrollText size={18} />
-      </motion.div>
-    </Link>
-  </div>
-</div>
+                  <div className="flex gap-4 items-center" style={{ position: "relative", zIndex: 1 }}>
+                    <Link to="/allcourses">
+                      <motion.div
+                        className="action-icon-btn"
+                        whileHover={{ rotate: -12, scale: 1.2 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        style={{ color: "#a46a3f" }}
+                        title="Explore Courses"
+                      >
+                        <BookOpen size={18} />
+                      </motion.div>
+                    </Link>
+
+                    <motion.div
+                      className="action-icon-btn"
+                      whileHover={{ rotate: -12, scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      style={{ color: "#a46a3f" }}
+                      title="Faculty Profile"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                      </svg>
+                    </motion.div>
+
+                    <Link to="/auth">
+                      <motion.div
+                        className="action-icon-btn"
+                        whileHover={{ rotate: -12, scale: 1.2 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        style={{ color: "#a46a3f" }}
+                        title="Student Login"
+                      >
+                        <ScrollText size={18} />
+                      </motion.div>
+                    </Link>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>

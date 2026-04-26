@@ -62,8 +62,8 @@ export default function Navbar() {
   const { isAuthenticated, user, loading, logout } = useAuth();
 
   const { pathname } = useLocation();
-  const isHome = pathname === "/";
-
+const transparentPages = ["/", "/about", "/faculty", "/contact", "/allcourses"];
+const isHome = transparentPages.includes(pathname);
   // --- LOGIN LOGIC (use AuthContext first, fallback to storage) ---
   const role = user?.role?.toUpperCase();
 

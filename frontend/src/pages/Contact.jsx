@@ -483,15 +483,16 @@ export default function Contact() {
           style={{
             position: "relative",
             width: "100%",
-            minHeight: "90vh",
+            /* ── KEY CHANGE: 90vh → 100vh, exact full screen ── */
+            height: "100vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            background: "#3a1f10" /* fallback while video loads */,
+            background: "#3a1f10",
           }}
         >
-          {/* Video — autoPlay + loop + muted + playsInline */}
+          {/* Video */}
           <video
             autoPlay
             loop
@@ -555,7 +556,7 @@ export default function Contact() {
             <MandalaSVG />
           </div>
 
-          {/* Hero text */}
+          {/* Hero text — padding removed since section is now exact 100vh */}
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -564,7 +565,7 @@ export default function Contact() {
               position: "relative",
               zIndex: 3,
               textAlign: "center",
-              padding: "5rem 1.5rem",
+              padding: "0 1.5rem",
             }}
           >
             {/* Badge row */}
