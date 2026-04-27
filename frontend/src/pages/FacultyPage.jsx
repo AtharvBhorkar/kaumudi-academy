@@ -222,7 +222,7 @@ const FacultyPage = () => {
         - Used h-full on inner motion div so content stays centered in full height
       */}
       <section
-        className="relative h-screen w-full flex items-center justify-center text-center overflow-hidden"
+        className="relative min-h-screen w-full flex items-center justify-center text-center overflow-hidden py-20 sm:py-24 md:py-0"
       >
         {/* Background Video — covers exactly 100vh × 100vw */}
         <video
@@ -289,7 +289,7 @@ const FacultyPage = () => {
           initial={{ opacity: 0, y: 45 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: "easeOut" }}
-          className="relative max-w-3xl px-6"
+          className="relative max-w-3xl px-4 sm:px-6"
           style={{ zIndex: 10 }}
         >
           <motion.div
@@ -319,7 +319,7 @@ const FacultyPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.35 }}
-            className="mt-5 font-serif text-4xl md:text-6xl font-extrabold text-white leading-tight"
+            className="mt-5 font-serif text-3xl sm:text-4xl md:text-6xl font-extrabold text-white leading-snug sm:leading-tight"
           >
             Guided by Tradition <br />
             <span className="italic" style={{
@@ -369,7 +369,7 @@ const FacultyPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.88 }}
-            className="mt-10 flex flex-row justify-center gap-3 sm:gap-5"
+            className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-5"
           >
             <Link to="/allcourses">
               <motion.span
