@@ -438,7 +438,7 @@ const FacultyPage = () => {
               className="font-serif text-4xl md:text-5xl font-extrabold mb-5"
               style={{
                 color: "transparent",
-                backgroundImage: "linear-gradient(135deg, #c8920a 0%, #a8720a 45%, #8a5c08 100%)",
+                backgroundImage: "linear-gradient(135deg, #5a3626 0%, #5a3626 45%, #5a3626 100%)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
