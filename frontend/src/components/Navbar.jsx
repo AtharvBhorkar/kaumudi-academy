@@ -1,346 +1,580 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User, LogOut } from "lucide-react"; // Icons add kiye
+import { Menu, X, User, LogOut, ChevronRight } from "lucide-react";
 import logo from "../assets/logo-bgremove.webp";
 import { useAuth } from "../context/useAuthHook";
 
-/* ------------------ CONFIG ------------------ */
+/* ─────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────── */
 
 const NAV_ITEMS = [
-  { label: "Home", to: "/" },
+  { label: "Home",    to: "/" },
   { label: "Courses", to: "/allcourses" },
-  { label: "About", to: "/about" },
+  { label: "About",   to: "/about" },
   { label: "Faculty", to: "/faculty" },
   { label: "Contact", to: "/contact" },
 ];
 
-/* ------------------ ANIMATIONS ------------------ */
+/* ─────────────────────────────────────────
+   NEOMORPHIC DESIGN TOKENS  (dark-maroon)
+   Base surface   : #2e0d09
+   Highlight wall : rgba(90,22,12, 0.85)   ← "lighter" face
+   Shadow wall    : rgba(6, 0, 0, 0.95)    ← "darker" face
+───────────────────────────────────────── */
 
-const mobileMenuVariants = {
-  hidden: { opacity: 0, y: -12, height: 0 },
+const NEO = {
+  base:       "#2e0d09",
+  surface:    "#3a110d",
+  raised:     "-5px -5px 12px rgba(88,20,10,0.75), 6px 6px 14px rgba(4,0,0,0.92)",
+  raisedSm:   "-3px -3px 7px rgba(88,20,10,0.7), 3px 3px 8px rgba(4,0,0,0.9)",
+  inset:      "inset -3px -3px 7px rgba(88,20,10,0.65), inset 3px 3px 8px rgba(4,0,0,0.9)",
+  gold:       "#d6b15c",
+  goldDark:   "#a8842a",
+  goldGlow:   "0 0 18px rgba(214,177,92,0.35), 0 0 40px rgba(214,177,92,0.12)",
+  pillRaised: "-4px -4px 9px rgba(88,20,10,0.7), 4px 4px 10px rgba(4,0,0,0.9)",
+  pillInset:  "inset -2px -2px 6px rgba(88,20,10,0.6), inset 2px 2px 7px rgba(4,0,0,0.88)",
+};
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+
+const drawerVariants = {
+  hidden:  { opacity: 0, height: 0, y: -8 },
   visible: {
-    opacity: 1,
-    y: 0,
-    height: "auto",
-    transition: { type: "spring", stiffness: 300, damping: 30, duration: 0.35 },
+    opacity: 1, height: "auto", y: 0,
+    transition: { type: "spring", stiffness: 280, damping: 28 },
   },
-  exit: {
-    opacity: 0,
-    y: -8,
-    height: 0,
-    transition: { duration: 0.22, ease: "easeIn" },
-  },
+  exit:    { opacity: 0, height: 0, y: -6, transition: { duration: 0.2 } },
 };
 
-const underlineVariants = {
-  hidden: { scaleX: 0 },
-  visible: { scaleX: 1 },
-};
-
-const mobileListContainer = {
+const stagger = {
   hidden: {},
-  show: {
-    transition: { staggerChildren: 0.06, delayChildren: 0.08 },
-  },
+  show:   { transition: { staggerChildren: 0.055, delayChildren: 0.07 } },
 };
 
-const mobileItem = {
-  hidden: { opacity: 0, y: 6 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.25, ease: "easeOut" },
-  },
+const fadeUp = {
+  hidden: { opacity: 0, y: 7 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" } },
 };
 
-/* ------------------ COMPONENT ------------------ */
+/* ─────────────────────────────────────────
+   COMPONENT
+───────────────────────────────────────── */
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]       = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, user, loading, logout } = useAuth();
-
   const { pathname } = useLocation();
-const transparentPages = ["/", "/about", "/faculty", "/contact", "/allcourses"];
-const isHome = transparentPages.includes(pathname);
-  // --- LOGIN LOGIC (use AuthContext first, fallback to storage) ---
-  const role = user?.role?.toUpperCase();
-
-  const isStudentLoggedIn = !loading && isAuthenticated && role === "STUDENT";
-
-  // console.log("ROLE:", role);
-  // console.log("USER:", user);
-  // console.log("isStudentLoggedIn:", isStudentLoggedIn);
-
-  // const profilePath =
-  //   role === "ADMIN" || role === "SUPER_ADMIN" ? "/admin" : "/student/overview";
-
-  const handleLogout = () => {
-    setOpen(false);
-    logout("/");
-  };
-
-  /* Scroll shadow */
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  /* Close on route change */
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
-  /* Body scroll lock when mobile menu is open */
   const mobileMenuRef = useRef(null);
 
+  const transparentPages = ["/", "/about", "/faculty", "/contact", "/allcourses"];
+  const isHome = transparentPages.includes(pathname);
+
+  const role               = user?.role?.toUpperCase();
+  const isStudentLoggedIn  = !loading && isAuthenticated && role === "STUDENT";
+
+  const handleLogout = () => { setOpen(false); logout("/"); };
+
+  /* scroll detection */
   useEffect(() => {
-    if (typeof document !== "undefined" && document.body) {
-      document.body.style.overflow = open ? "hidden" : "";
-      return () => {
-        document.body.style.overflow = "";
-      };
-    }
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* close on route change */
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  /* body scroll lock */
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  // Accessibility: focus first menu item when opened and close on Escape
+  /* focus-trap + escape */
   useEffect(() => {
     if (!open) return;
-    const first = mobileMenuRef.current?.querySelector("a,button");
-    first?.focus?.();
-
-    const onKey = (e) => {
-      if (e.key === "Escape") setOpen(false);
-    };
+    mobileMenuRef.current?.querySelector("a,button")?.focus();
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  /* ── helpers ── */
+  const solidBg     = `background: ${NEO.base};`;
+  const navShadow   = `box-shadow: ${NEO.raised}, 0 1px 0 rgba(214,177,92,0.08);`;
+  const isTransparent = isHome && !scrolled;
+
   return (
-    <nav
-      role="navigation"
-      aria-label="Main Navigation"
-      className={`top-0 z-50 w-full transition-all duration-500 border-b ${
-        isHome ? "fixed" : "sticky"
-      } ${
-        isHome && !scrolled
-          ? "bg-transparent border-transparent"
-          : "bg-gradient-to-t from-[#3b120e]/95 via-[#5a1e17]/90 to-[#2a0b08]/95 backdrop-blur-xl border-[#dccbb4]/40 shadow-[0_14px_35px_rgba(0,0,0,0.35)]"
-      }`}
-    >
-      <div className="max-w-[1280px] mx-auto px-5 h-16 md:h-20 flex items-center justify-between">
-        {/* ---------------- BRAND ---------------- */}
-        <Link
-          to="/"
-          className="flex items-center gap-3 group focus:outline-none"
-        >
-          <div
-            className="
-    relative
-    bg-[#74271E]
-    h-12 w-12
-    rounded-xl
-    grid place-items-center
-    text-lg
-    p-1
-    overflow-hidden
-    transition-all duration-500
-    group-hover:scale-110
-    shadow-[0_0_18px_rgba(214,177,92,0.55)]
-    before:absolute before:inset-0
-    before:rounded-xl
-    before:bg-[radial-gradient(circle,rgba(214,177,92,0.55),transparent_70%)]
-    before:opacity-70
-    before:blur-md
-    before:animate-pulse
-  "
+    <>
+      {/* ── GLOBAL STYLES injected once ── */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Raleway:wght@400;500;600;700&display=swap');
+
+        .ksa-nav {
+          font-family: 'Raleway', sans-serif;
+        }
+        .ksa-brand-title {
+          font-family: 'Cinzel', serif;
+          letter-spacing: 0.2em;
+        }
+        /* raised neo pill */
+        .ksa-neo-pill {
+          border-radius: 50px;
+          box-shadow: ${NEO.pillRaised};
+          background: ${NEO.surface};
+          transition: box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .ksa-neo-pill:hover {
+          box-shadow: ${NEO.pillInset};
+        }
+        /* inset active pill */
+        .ksa-neo-pill-active {
+          border-radius: 50px;
+          box-shadow: ${NEO.pillInset};
+          background: ${NEO.base};
+        }
+        /* gold button */
+        .ksa-gold-btn {
+          background: linear-gradient(135deg, #e0be6a 0%, #c49a38 50%, #d6b15c 100%);
+          box-shadow: ${NEO.raisedSm}, ${NEO.goldGlow};
+          border: none;
+          border-radius: 50px;
+          color: #2e0d09;
+          font-family: 'Raleway', sans-serif;
+          font-weight: 700;
+          cursor: pointer;
+          transition: box-shadow 0.22s ease, filter 0.22s ease, transform 0.15s ease;
+        }
+        .ksa-gold-btn:hover {
+          box-shadow: ${NEO.inset}, ${NEO.goldGlow};
+          filter: brightness(1.06);
+        }
+        .ksa-gold-btn:active {
+          transform: scale(0.97);
+        }
+        /* logo container */
+        .ksa-logo-wrap {
+          border-radius: 14px;
+          box-shadow: ${NEO.raised}, inset 0 0 0 1px rgba(214,177,92,0.12);
+          background: ${NEO.surface};
+          transition: box-shadow 0.3s ease;
+        }
+        .ksa-logo-wrap:hover {
+          box-shadow: ${NEO.raisedSm}, inset 0 0 0 1px rgba(214,177,92,0.25), ${NEO.goldGlow};
+        }
+        /* divider line */
+        .ksa-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(214,177,92,0.25), transparent);
+        }
+        /* mobile item */
+        .ksa-mobile-item {
+          border-radius: 12px;
+          box-shadow: ${NEO.raisedSm};
+          background: ${NEO.surface};
+          transition: box-shadow 0.2s ease;
+        }
+        .ksa-mobile-item:hover,
+        .ksa-mobile-item:focus-within {
+          box-shadow: ${NEO.inset};
+        }
+        /* nav link underline dot */
+        .ksa-nav-dot {
+          width: 4px; height: 4px;
+          border-radius: 50%;
+          background: ${NEO.gold};
+          box-shadow: 0 0 6px rgba(214,177,92,0.7);
+          margin: 0 auto;
+          margin-top: 3px;
+        }
+        /* toggle button */
+        .ksa-toggle {
+          border-radius: 10px;
+          box-shadow: ${NEO.raisedSm};
+          background: ${NEO.surface};
+          border: 1px solid rgba(214,177,92,0.1);
+          color: ${NEO.gold};
+          transition: box-shadow 0.2s ease;
+        }
+        .ksa-toggle:hover {
+          box-shadow: ${NEO.inset};
+        }
+        /* profile chip */
+        .ksa-profile-chip {
+          border-radius: 50px;
+          box-shadow: ${NEO.raisedSm};
+          background: ${NEO.surface};
+          border: 1px solid rgba(214,177,92,0.15);
+          transition: box-shadow 0.2s ease;
+        }
+        .ksa-profile-chip:hover {
+          box-shadow: ${NEO.inset};
+          border-color: rgba(214,177,92,0.3);
+        }
+        /* avatar */
+        .ksa-avatar {
+          background: ${NEO.base};
+          box-shadow: ${NEO.inset};
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+        }
+        /* scrollbar in mobile */
+        .ksa-drawer::-webkit-scrollbar { width: 0; }
+      `}</style>
+
+      <nav
+        role="navigation"
+        aria-label="Main Navigation"
+        className="ksa-nav"
+        style={{
+          position: isHome ? "fixed" : "sticky",
+          top: 0,
+          zIndex: 50,
+          width: "100%",
+          transition: "background 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease",
+          ...(isTransparent
+            ? { background: "transparent", boxShadow: "none", borderBottom: "1px solid transparent" }
+            : {
+                background: NEO.base,
+                boxShadow: `${NEO.raised}, 0 1px 0 rgba(214,177,92,0.1)`,
+                borderBottom: "1px solid rgba(214,177,92,0.12)",
+              }),
+        }}
+      >
+        {/* subtle top accent line */}
+        {!isTransparent && (
+          <div style={{
+            height: "2px",
+            background: "linear-gradient(90deg, transparent 0%, rgba(214,177,92,0.5) 50%, transparent 100%)",
+          }} />
+        )}
+
+        <div style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: "0 20px",
+          height: 72,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 16,
+        }}>
+
+          {/* ─── BRAND ─── */}
+          <Link
+            to="/"
+            style={{ display: "flex", alignItems: "center", gap: 14, textDecoration: "none", outline: "none" }}
           >
-            <img
-              src={logo}
-              alt="logo"
-              className="relative z-10 brightness-110 contrast-110"
-            />
-          </div>
-
-          <div className="leading-tight">
-            <div className="font-black tracking-widest text-white group-hover:text-[#d6b15c] transition">
-              KAUMUDI
-            </div>
-            <div className="text-[11px] tracking-[0.18em] text-white/80">
-              SANSKRIT ACADEMY
-            </div>
-          </div>
-        </Link>
-
-        {/* ---------------- DESKTOP NAV (visible on large screens) ---------------- */}
-        <ul className="hidden lg:flex items-center gap-10 font-semibold flex-wrap">
-          {NAV_ITEMS.map(({ label, to }) => {
-            const isActive = pathname === to;
-            return (
-              <li key={label} className="relative">
-                <Link
-                  to={to}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`text-sm tracking-wide transition-colors duration-200 ease-out focus:outline-none ${
-                    isActive
-                      ? "text-[#d6b15c]"
-                      : "text-white hover:text-[#d6b15c]"
-                  }`}
-                >
-                  {label}
-                </Link>
-                <motion.span
-                  className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#d6b15c] rounded"
-                  variants={underlineVariants}
-                  initial="hidden"
-                  animate={isActive ? "visible" : "hidden"}
-                  transition={{ duration: 0.25 }}
-                />
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* ---------------- RIGHT ACTIONS ---------------- */}
-        <div className="flex items-center gap-4">
-          {isStudentLoggedIn ? (
-            <div className="hidden lg:flex items-center gap-4">
-              {/* Profile Link */}
-              <Link
-                to={"/student/overview"}
-                className="flex items-center gap-2 text-[#d6b15c] font-semibold text-sm hover:opacity-90 transition"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#74271E]/20 flex items-center justify-center border border-[#d6b15c]/90">
-                  <User size={22} />
-                </div>
-                <span className="text-white">Profile</span>
-              </Link>
-
-              {/* Logout Button */}
-              <motion.button
-                onClick={handleLogout}
-                whileHover={{ scale: 1.06 }}
-                whileTap={{ scale: 0.94 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d6b15c] text-[#74271E] border border-[#d6b15c] font-bold text-xs shadow-lg transition-all"
-              >
-                <LogOut size={14} />
-                Logout
-              </motion.button>
-            </div>
-          ) : (
-            <Link to="/auth" className="hidden lg:block">
-              <motion.span
-                whileHover={{ scale: 1.06 }}
-                whileTap={{ scale: 0.94 }}
-                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#d6b15c] text-[#74271E] font-bold text-sm shadow-lg hover:shadow-xl transition-all"
-              >
-                Student Login
-              </motion.span>
-            </Link>
-          )}
-
-          {/* ---------------- MOBILE TOGGLE ---------------- */}
-          <button
-            onClick={() => setOpen((v) => !v)}
-            className="lg:hidden p-2 rounded-xl bg-[#d6b15c]/15 text-[#d6b15c] hover:bg-[#d6b15c]/25 transition-colors focus:outline-none"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label="Toggle navigation"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
-
-      {/* ---------------- MOBILE MENU ---------------- */}
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 z-40 bg-black/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-            />
-            {/* Panel */}
-            <motion.div
-              id="mobile-menu"
-              ref={mobileMenuRef}
-              tabIndex={-1}
-              role="dialog"
-              aria-modal="true"
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="lg:hidden relative z-50 bg-[#74271E] border-t border-[#dccbb4]/25 overflow-hidden"
+              className="ksa-logo-wrap"
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.96 }}
+              style={{ width: 48, height: 48, display: "grid", placeItems: "center", padding: 6, flexShrink: 0 }}
             >
-              <motion.div
-                variants={mobileListContainer}
-                initial="hidden"
-                animate="show"
-                className="px-6 py-6 space-y-5"
+              <img src={logo} alt="Kaumudi Logo" style={{ width: "100%", filter: "brightness(1.1) contrast(1.05)" }} />
+            </motion.div>
+
+            <div style={{ lineHeight: 1.15 }}>
+              <div
+                className="ksa-brand-title"
+                style={{
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: NEO.gold,
+                  letterSpacing: "0.22em",
+                  textShadow: "0 0 14px rgba(214,177,92,0.4)",
+                }}
               >
-                {/* Profile link in Mobile Menu */}
-                {isStudentLoggedIn && (
-                  <motion.div variants={mobileItem}>
-                    <Link
-                      to="/student/overview"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 text-[#d6b15c]"
-                    >
-                      <User size={20} />
-                      <span className="font-bold">Profile</span>
-                    </Link>
-                  </motion.div>
-                )}
+                KAUMUDI
+              </div>
+              <div style={{
+                fontSize: 9,
+                letterSpacing: "0.28em",
+                color: "rgba(255,255,255,0.55)",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                marginTop: 1,
+              }}>
+                Sanskrit Academy
+              </div>
+            </div>
+          </Link>
 
-                {NAV_ITEMS.map(({ label, to }) => (
-                  <motion.div key={label} variants={mobileItem}>
-                    <Link
-                      to={to}
-                      onClick={() => setOpen(false)}
-                      className={`block text-lg font-medium tracking-wide transition-colors ${
-                        pathname === to
-                          ? "text-[#d6b15c]"
-                          : "text-[#e6d0bd] hover:text-[#d6b15c]"
-                      }`}
-                    >
-                      {label}
-                    </Link>
-                  </motion.div>
-                ))}
+          {/* ─── DESKTOP NAV ─── */}
+          <ul style={{
+            display: "none",
+            alignItems: "center",
+            gap: 6,
+            listStyle: "none",
+            margin: 0,
+            padding: 0,
+          }} className="desktop-nav">
+            {NAV_ITEMS.map(({ label, to }) => {
+              const isActive = pathname === to;
+              return (
+                <li key={label} style={{ position: "relative" }}>
+                  <Link
+                    to={to}
+                    aria-current={isActive ? "page" : undefined}
+                    className={isActive ? "ksa-neo-pill-active" : "ksa-neo-pill"}
+                    style={{
+                      display: "block",
+                      padding: "7px 18px",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      letterSpacing: "0.06em",
+                      color: isActive ? NEO.gold : "rgba(255,255,255,0.78)",
+                      textDecoration: "none",
+                      outline: "none",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {label}
+                    {isActive && <div className="ksa-nav-dot" />}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-                <div className="pt-5 border-t border-[#dccbb4]/25">
-                  {isStudentLoggedIn ? (
-                    <motion.div variants={mobileItem}>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#d6b15c] text-[#74271E] border border-[#d6b15c] font-bold text-lg"
-                      >
-                        <LogOut size={20} /> Logout
-                      </button>
-                    </motion.div>
-                  ) : (
-                    <motion.div variants={mobileItem}>
-                      <Link to="/auth" onClick={() => setOpen(false)}>
-                        <span className="block text-center py-3 rounded-xl bg-[#d6b15c] text-[#74271E] font-bold text-lg shadow-lg">
-                          Student Login
-                        </span>
+          {/* ─── RIGHT ACTIONS ─── */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+
+            {/* Desktop: authenticated */}
+            {isStudentLoggedIn ? (
+              <div className="desktop-action" style={{ display: "none", alignItems: "center", gap: 10 }}>
+                <Link to="/student/overview" style={{ textDecoration: "none" }}>
+                  <div className="ksa-profile-chip" style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 16px 7px 8px", cursor: "pointer" }}>
+                    <div className="ksa-avatar" style={{ width: 30, height: 30 }}>
+                      <User size={16} color={NEO.gold} />
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)", letterSpacing: "0.04em" }}>
+                      Profile
+                    </span>
+                  </div>
+                </Link>
+
+                <motion.button
+                  onClick={handleLogout}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="ksa-gold-btn"
+                  style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 20px", fontSize: 12, letterSpacing: "0.07em" }}
+                >
+                  <LogOut size={13} />
+                  Logout
+                </motion.button>
+              </div>
+            ) : (
+              <div className="desktop-action" style={{ display: "none" }}>
+                <Link to="/auth" style={{ textDecoration: "none" }}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="ksa-gold-btn"
+                    style={{ padding: "10px 26px", fontSize: 13, letterSpacing: "0.07em", display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    Student Login
+                    <ChevronRight size={14} />
+                  </motion.button>
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile toggle */}
+            <motion.button
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label="Toggle navigation"
+              whileTap={{ scale: 0.93 }}
+              className="ksa-toggle mobile-toggle"
+              style={{ padding: "9px", display: "flex", cursor: "pointer", outline: "none" }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {open
+                  ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.18 }}>
+                      <X size={22} color={NEO.gold} />
+                    </motion.span>
+                  : <motion.span key="m" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.18 }}>
+                      <Menu size={22} color={NEO.gold} />
+                    </motion.span>
+                }
+              </AnimatePresence>
+            </motion.button>
+          </div>
+        </div>
+
+        {/* ─── MOBILE DRAWER ─── */}
+        <AnimatePresence>
+          {open && (
+            <>
+              {/* backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setOpen(false)}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 40,
+                  background: "rgba(0,0,0,0.55)",
+                  backdropFilter: "blur(3px)",
+                }}
+              />
+
+              {/* panel */}
+              <motion.div
+                id="mobile-menu"
+                ref={mobileMenuRef}
+                tabIndex={-1}
+                role="dialog"
+                aria-modal="true"
+                className="ksa-drawer"
+                variants={drawerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                style={{
+                  position: "relative",
+                  zIndex: 50,
+                  background: NEO.base,
+                  borderTop: "1px solid rgba(214,177,92,0.15)",
+                  overflowY: "auto",
+                  maxHeight: "calc(100vh - 72px)",
+                  boxShadow: `0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(214,177,92,0.1)`,
+                }}
+              >
+                {/* gold top accent */}
+                <div style={{
+                  height: 1,
+                  background: "linear-gradient(90deg, transparent 0%, rgba(214,177,92,0.4) 50%, transparent 100%)",
+                }} />
+
+                <motion.div
+                  variants={stagger}
+                  initial="hidden"
+                  animate="show"
+                  style={{ padding: "20px 20px 28px" }}
+                >
+                  {/* profile chip (mobile) */}
+                  {isStudentLoggedIn && (
+                    <motion.div variants={fadeUp} style={{ marginBottom: 12 }}>
+                      <Link to="/student/overview" onClick={() => setOpen(false)} style={{ textDecoration: "none" }}>
+                        <div className="ksa-mobile-item" style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
+                          <div className="ksa-avatar" style={{ width: 36, height: 36, flexShrink: 0 }}>
+                            <User size={18} color={NEO.gold} />
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: NEO.gold, letterSpacing: "0.04em" }}>My Profile</div>
+                            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>View dashboard</div>
+                          </div>
+                          <ChevronRight size={16} color="rgba(214,177,92,0.5)" style={{ marginLeft: "auto" }} />
+                        </div>
                       </Link>
                     </motion.div>
                   )}
-                </div>
+
+                  {/* divider */}
+                  {isStudentLoggedIn && <div className="ksa-divider" style={{ marginBottom: 12 }} />}
+
+                  {/* nav links */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {NAV_ITEMS.map(({ label, to }) => {
+                      const isActive = pathname === to;
+                      return (
+                        <motion.div key={label} variants={fadeUp}>
+                          <Link
+                            to={to}
+                            onClick={() => setOpen(false)}
+                            className={isActive ? "ksa-neo-pill-active" : "ksa-mobile-item"}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              padding: "13px 18px",
+                              borderRadius: isActive ? 50 : 12,
+                              textDecoration: "none",
+                              fontSize: 15,
+                              fontWeight: isActive ? 700 : 500,
+                              letterSpacing: "0.04em",
+                              color: isActive ? NEO.gold : "rgba(230,210,195,0.88)",
+                            }}
+                          >
+                            {label}
+                            <ChevronRight size={15} color={isActive ? NEO.gold : "rgba(255,255,255,0.25)"} />
+                          </Link>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+
+                  {/* divider */}
+                  <div className="ksa-divider" style={{ margin: "18px 0" }} />
+
+                  {/* CTA */}
+                  <motion.div variants={fadeUp}>
+                    {isStudentLoggedIn ? (
+                      <motion.button
+                        onClick={handleLogout}
+                        whileTap={{ scale: 0.97 }}
+                        className="ksa-gold-btn"
+                        style={{
+                          width: "100%",
+                          padding: "14px",
+                          fontSize: 15,
+                          letterSpacing: "0.07em",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 10,
+                        }}
+                      >
+                        <LogOut size={17} />
+                        Logout
+                      </motion.button>
+                    ) : (
+                      <Link to="/auth" onClick={() => setOpen(false)} style={{ textDecoration: "none" }}>
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          className="ksa-gold-btn"
+                          style={{
+                            width: "100%",
+                            padding: "14px",
+                            fontSize: 15,
+                            letterSpacing: "0.07em",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 10,
+                          }}
+                        >
+                          Student Login
+                          <ChevronRight size={17} />
+                        </motion.button>
+                      </Link>
+                    )}
+                  </motion.div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </nav>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* responsive CSS — can't use Tailwind lg: inside JSX style, so we inject it */}
+        <style>{`
+          @media (min-width: 1024px) {
+            .desktop-nav { display: flex !important; }
+            .desktop-action { display: flex !important; }
+            .mobile-toggle { display: none !important; }
+          }
+        `}</style>
+      </nav>
+    </>
   );
 }
