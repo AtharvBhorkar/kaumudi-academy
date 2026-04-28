@@ -1,6 +1,3 @@
-//////////////Contact.jsx
-
-
 import {
   MapPin,
   Landmark,
@@ -75,12 +72,14 @@ const CSS = `
 @keyframes kFloatB  { 0%,100%{transform:translateY(0)}   50%{transform:translateY(20px)}  }
 @keyframes kRotCW   { to { transform:rotate(360deg);  } }
 @keyframes kRotCCW  { to { transform:rotate(-360deg); } }
+@keyframes kBlink   { 0%,49%{opacity:1} 50%,100%{opacity:0} }
 
 .k-orb-a { animation:kFloatA 9s  ease-in-out infinite; }
 .k-orb-b { animation:kFloatB 11s ease-in-out infinite; }
 .k-orb-c { animation:kFloatA 14s ease-in-out infinite; }
 .k-mcw   { animation:kRotCW  60s linear infinite; }
 .k-mccw  { animation:kRotCCW 40s linear infinite; }
+.k-cursor { animation:kBlink 0.85s step-start infinite; }
 
 /* Neo+glass card */
 .k-card {
@@ -232,6 +231,17 @@ const CSS = `
 
 .k-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 @media(max-width:640px) { .k-info-grid { grid-template-columns: 1fr; } }
+
+
+/* ── Responsive overrides ── */
+@media(max-width:768px) {
+  .k-contact-strip-grid { grid-template-columns: 1fr !important; }
+  .k-follow-row { flex-wrap: wrap; justify-content: center; }
+}
+@media(max-width:480px) {
+  .k-card { border-radius: 1.2rem; }
+  .k-info-card { padding: 1.25rem; }
+}
 
 /* Divider line */
 .k-divline {
@@ -483,16 +493,15 @@ export default function Contact() {
           style={{
             position: "relative",
             width: "100%",
-            /* ── KEY CHANGE: 90vh → 100vh, exact full screen ── */
-            height: "100vh",
+            minHeight: "100vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            background: "#3a1f10",
+            background: "#3a1f10" /* fallback while video loads */,
           }}
         >
-          {/* Video */}
+          {/* Video — autoPlay + loop + muted + playsInline */}
           <video
             autoPlay
             loop
@@ -556,7 +565,7 @@ export default function Contact() {
             <MandalaSVG />
           </div>
 
-          {/* Hero text — padding removed since section is now exact 100vh */}
+          {/* Hero text */}
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -565,7 +574,7 @@ export default function Contact() {
               position: "relative",
               zIndex: 3,
               textAlign: "center",
-              padding: "0 1.5rem",
+              padding: "5rem 1.5rem",
             }}
           >
             {/* Badge row */}
@@ -584,8 +593,8 @@ export default function Contact() {
               <Lotus />
               <span
                 style={{
-                  fontSize: "3rem",
-                  letterSpacing: ".42em",
+                  fontSize: "3em",
+                  letterSpacing: ".25em",
                   color: "#e1b27c",
                   fontWeight: 700,
                   textTransform: "uppercase",
@@ -613,15 +622,15 @@ export default function Contact() {
             >
               {heroTyped}
               <span
+                className="k-cursor"
                 style={{
                   display: "inline-block",
                   width: "3px",
                   marginLeft: "4px",
                   background: "#d19A5B",
-                  animation: "kFloatA 0.8s step-start infinite",
-                  verticalAlign: "middle",
-                  height: "0.85em",
+                  height: "0.8em",
                   borderRadius: 2,
+                  verticalAlign: "text-bottom",
                 }}
               />
             </motion.h1>
@@ -1158,6 +1167,7 @@ export default function Contact() {
                   style={{ padding: "1.5rem 2rem" }}
                 >
                   <div
+                    className="k-contact-strip-grid"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "repeat(3,1fr)",
@@ -1213,6 +1223,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}
+              className="k-follow-row"
               style={{
                 marginTop: "3.5rem",
                 paddingBottom: "1rem",

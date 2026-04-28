@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 const CurriculumAccordion = ({ curriculumData }) => {
   const [openIndex, setOpenIndex] = useState(-1);
   const navigate = useNavigate();
-
-  // --- LOGIC ADDED: Login Check ---
   const isLoggedIn = !!localStorage.getItem("kaumudi_token");
 
   const fallbackModules = [
@@ -35,22 +33,22 @@ const CurriculumAccordion = ({ curriculumData }) => {
         "Sutra structure analysis",
         "Paribhasha implementation",
         "Vartika perspectives",
-      ], // Content add kiya takki login ke baad empty na dikhe
+      ],
     },
   ];
 
-  const modules = Array.isArray(curriculumData) && curriculumData.length
-    ? curriculumData
-    : curriculumData && typeof curriculumData === "object"
-    ? Object.entries(curriculumData).map(([title, items]) => ({
-        title,
-        isLocked: false,
-        content: Array.isArray(items) ? items : [],
-      }))
-    : fallbackModules;
+  const modules =
+    Array.isArray(curriculumData) && curriculumData.length
+      ? curriculumData
+      : curriculumData && typeof curriculumData === "object"
+        ? Object.entries(curriculumData).map(([title, items]) => ({
+            title,
+            isLocked: false,
+            content: Array.isArray(items) ? items : [],
+          }))
+        : fallbackModules;
 
   const handleToggle = (index, isLocked) => {
-    // Agar module locked hai AUR user login NAHI hai, tabhi redirect karein
     if (isLocked && !isLoggedIn) {
       navigate("/auth");
       return;
@@ -60,61 +58,124 @@ const CurriculumAccordion = ({ curriculumData }) => {
 
   return (
     <section className="font-sans-serif">
+      {/* Section heading */}
       <div className="flex items-center gap-3 mb-8 mt-12">
-        <div className="w-1.5 h-8 bg-[#d6b15c]"></div>
-        <h2 className="text-[28px] font-bold text-[#74271E]">Curriculum</h2>
+        <div
+          className="w-1 h-8"
+          style={{ backgroundColor: "#d19A5B", borderRadius: "2px" }}
+        />
+        <h2 className="text-[28px] font-bold" style={{ color: "#5A3626" }}>
+          Curriculum
+        </h2>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {modules.map((module, index) => {
           const isOpen = openIndex === index;
-          // UI Logic: Agar login hai toh lock icon hide kar sakte hain ya color change
           const showAsLocked = module.isLocked && !isLoggedIn;
 
           return (
             <div
               key={index}
-              className={`rounded-[16px] overflow-hidden border border-[#E8DFD3] shadow-sm transition-all ${isOpen ? "ring-1 ring-[#B18E40]" : ""}`}
+              className="overflow-hidden transition-all duration-300"
+              style={{
+                borderRadius: isOpen ? "20px 20px 20px 20px" : "20px",
+                border: isOpen
+                  ? "1.5px solid rgba(209,154,91,0.5)"
+                  : "1.5px solid rgba(164,106,63,0.15)",
+                backgroundColor: "#fff",
+                boxShadow: isOpen
+                  ? "0 8px 32px rgba(90,54,38,0.12)"
+                  : "0 2px 8px rgba(90,54,38,0.05)",
+              }}
             >
               <button
                 onClick={() => handleToggle(index, module.isLocked)}
-                className={`w-full flex justify-between items-center p-6 text-left transition-colors ${isOpen ? "bg-white" : "bg-white hover:bg-[#F9F5F0]"}`}
+                className="w-full flex justify-between items-center p-5 text-left"
+                style={{
+                  background: isOpen
+                    ? "linear-gradient(90deg, rgba(242,230,217,0.6) 0%, #fff 100%)"
+                    : "#fff",
+                }}
               >
                 <div className="flex items-center gap-4">
+                  {/* Number badge — pill shape when open */}
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[14px] font-bold ${showAsLocked ? "bg-[#D9C5B2] text-white" : "bg-[#631D11] text-white"}`}
+                    className="flex items-center justify-center text-[13px] font-black text-white flex-shrink-0 transition-all duration-300"
+                    style={{
+                      width: isOpen ? "auto" : "36px",
+                      height: "36px",
+                      padding: isOpen ? "0 14px" : "0",
+                      borderRadius: "100px",
+                      background: showAsLocked
+                        ? "rgba(164,106,63,0.3)"
+                        : isOpen
+                          ? "linear-gradient(135deg, #d19A5B, #bb6A45)"
+                          : "linear-gradient(135deg, #bb6A45, #5A3626)",
+                    }}
                   >
-                    {index + 1}
+                    {isOpen ? `0${index + 1}` : index + 1}
                   </div>
+
                   <span
-                    className={`text-[18px] font-bold ${showAsLocked ? "text-gray-400" : "text-[#631D11]"}`}
+                    className="text-[17px] font-bold"
+                    style={{ color: showAsLocked ? "#A46A3F" : "#5A3626" }}
                   >
                     {module.title}
                   </span>
                 </div>
 
-                <div className="text-gray-400">
+                <div className="flex-shrink-0 ml-4">
                   {showAsLocked ? (
-                    <Lock size={20} className="text-[#B18E40]" />
+                    <Lock size={18} style={{ color: "#d19A5B" }} />
                   ) : isOpen ? (
-                    <ChevronUp size={24} className="text-[#631D11]" />
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: "rgba(209,154,91,0.15)" }}
+                    >
+                      <ChevronUp size={18} style={{ color: "#bb6A45" }} />
+                    </div>
                   ) : (
-                    <ChevronDown size={24} className="text-[#631D11]" />
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: "rgba(164,106,63,0.08)" }}
+                    >
+                      <ChevronDown size={18} style={{ color: "#A46A3F" }} />
+                    </div>
                   )}
                 </div>
               </button>
 
-              {/* Login hone par ya unlocked hone par content dikhayein */}
               {isOpen && (!module.isLocked || isLoggedIn) && (
-                <div className="bg-[#EFE3C8] p-8 border-t border-[#D9C5B2]">
-                  <ul className="space-y-4">
+                <div
+                  className="px-6 pb-6 pt-2"
+                  style={{
+                    borderTop: "1px solid rgba(164,106,63,0.15)",
+                    background: "rgba(242,230,217,0.35)",
+                  }}
+                >
+                  {/* Accent bar */}
+                  <div
+                    className="w-12 h-1 rounded-full mb-4 mt-3"
+                    style={{ backgroundColor: "#d19A5B" }}
+                  />
+                  <ul className="space-y-3">
                     {module.content &&
                       module.content.map((item, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-3 text-[#631D11] font-medium text-[16px]"
+                          className="flex items-start gap-3 font-medium text-[15px]"
+                          style={{ color: "#5A3626" }}
                         >
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#631D11] mt-2 shrink-0"></div>
+                          <div
+                            className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                            style={{ backgroundColor: "rgba(187,106,69,0.15)" }}
+                          >
+                            <div
+                              className="w-1.5 h-1.5 rounded-full"
+                              style={{ backgroundColor: "#bb6A45" }}
+                            />
+                          </div>
                           {item}
                         </li>
                       ))}
