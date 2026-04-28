@@ -1,173 +1,5 @@
-// import React, { useState, useEffect } from "react";
-// import { CheckCircle, Flame } from "lucide-react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { useAuth } from "../../context/useAuthHook";
-
-// // courseFullData prop add kiya gaya hai
-// const SidebarCard = ({ price, courseData }) => {
-//   const navigate = useNavigate();
-//   const { isAuthenticated } = useAuth();
-//   const [leftSeats, setLeftSeats] = useState(0);
-//   const totalSeats = 25;
-//   const targetLeft = 4;
-//   const [visibleFeatures, setVisibleFeatures] = useState(0);
-
-//   // Format price properly from backend
-//   const formatPrice = (p) => {
-//     if (!p) return "0";
-//     const numPrice =
-//       typeof p === "string" ? parseInt(p.replace(/[^0-9]/g, "")) || 0 : p;
-//     return numPrice.toLocaleString("en-IN");
-//   };
-
-//   const features = [
-//     "120+ Hours of Live Instruction",
-//     "Certificate of Completion",
-//     "Access to Library & Recordings",
-//     "Lifetime Discussion Forum Access",
-//     "Expert Scholars with Proven Pedagogy & Wisdom",
-//   ];
-
-//   useEffect(() => {
-//     if (leftSeats < targetLeft) {
-//       const timer = setTimeout(() => setLeftSeats((prev) => prev + 1), 150);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [leftSeats]);
-
-//   useEffect(() => {
-//     if (visibleFeatures < features.length) {
-//       const timer = setTimeout(
-//         () => setVisibleFeatures((prev) => prev + 1),
-//         500,
-//       );
-//       return () => clearTimeout(timer);
-//     }
-//   }, [visibleFeatures]);
-
-//   const progressPercent = ((totalSeats - targetLeft) / totalSeats) * 100;
-
-//   return (
-//     <div className="sticky top-10 bg-white rounded-[24px] overflow-hidden shadow-xl border border-gray-100 max-w-[380px] min-h-[850px] flex flex-col">
-//       <div className="relative bg-[#74271E] p-8 text-white text-center flex-none">
-//         <div
-//           className="absolute top-0 right-0 w-25 h-10 bg-[#d6b15c]"
-//           style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-//         ></div>
-//         <p className="text-[12px] uppercase tracking-[0.25em] font-bold text-stone-300 mb-2">
-//           Full Course Fee
-//         </p>
-//         <div className="flex items-center justify-center gap-3 mt-4">
-//           <span className="text-4xl font-extrabold tracking-tight">
-//             ₹{formatPrice(price)}
-//           </span>
-//           <span className="text-xl line-through text-stone-400 font-medium">
-//             ₹24,000
-//           </span>
-//         </div>
-//         <div className="mt-6 inline-block bg-[#d6b15c] text-[#3D1A16] text-[11px] font-bold px-6 py-2 rounded-full shadow-md">
-//           EMI STARTS AT ₹1,500/MO
-//         </div>
-//       </div>
-
-//       <div className="p-8 flex-grow flex flex-col justify-between space-y-6">
-//         <div className="space-y-10">
-//           <div className="space-y-4">
-//             <div className="flex justify-between items-start">
-//               <div className="flex gap-2">
-//                 <Flame size={22} className="text-[#d6b15c] fill-[#d6b15c]" />
-//                 <span className="text-[#631D11] font-bold text-[15px] leading-tight">
-//                   Limited Seats
-//                   <br />
-//                   Remaining
-//                 </span>
-//               </div>
-//               <span className="font-extrabold text-[#631D11] text-right text-[15px]">
-//                 {leftSeats} / {totalSeats}
-//                 <br />
-//                 <span className="font-medium text-[12px] text-gray-500 uppercase tracking-wide">
-//                   left
-//                 </span>
-//               </span>
-//             </div>
-//             <div className="w-full bg-[#F3F0E9] h-3.5 rounded-full overflow-hidden">
-//               <div
-//                 className="bg-[#d6b15c] h-full rounded-full shadow-inner transition-all duration-1000"
-//                 style={{ width: `${leftSeats > 0 ? progressPercent : 0}%` }}
-//               ></div>
-//             </div>
-//           </div>
-
-//           <ul className="space-y-8">
-//             {features.map((item, i) => (
-//               <li
-//                 key={i}
-//                 className={`flex gap-7 items-start leading-snug transition-all duration-500 ${i < visibleFeatures ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}
-//               >
-//                 <CheckCircle
-//                   size={24}
-//                   className={`text-[#d6b15c] shrink-0 transition-transform duration-500 ${i < visibleFeatures ? "scale-100" : "scale-0"}`}
-//                   fill="#B18E401A"
-//                   strokeWidth={2.5}
-//                 />
-//                 <span className="text-[#7A5C58] font-bold text-[18px]">
-//                   {item}
-//                 </span>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-
-//         {/* Buttons Section with Spacing and Data Passing */}
-//         <div className="flex flex-col space-y-6 mt-auto">
-//           <Link
-//             to="/courseBuy"
-//             className="w-full"
-//             state={{
-//               courseId: courseData?._id || courseData?.id || null,
-//               courseName: courseData?.title,
-//               price: courseData?.price,
-//               duration: courseData?.duration,
-//               level: courseData?.level,
-//               language: courseData?.language,
-//               mode: "Live Online",
-//             }}
-//           >
-//             <div className="flex justify-center w-full">
-//               <button className="w-[80%] bg-[#631D11] text-white px-8 py-3 rounded-2xl font-bold text-xl hover:text-[#631D11] hover:bg-[#d6b15c] transition-all flex items-center justify-center gap-2 shadow-lg">
-//                 Enroll Now <span className="text-2xl">→</span>
-//               </button>
-//             </div>
-//           </Link>
-
-//           {/* Inquiry Link with State Data */}
-
-//           <Link
-//             to="/inquiry"
-//             className="w-full"
-//             state={{
-//               // courseData se title, duration aur language uthayega
-//               courseName: courseData?.title || "Sanskrit for Beginners",
-//               duration: courseData?.duration || "6 Months",
-//               language: courseData?.language || "Sanskrit/Hindi",
-//               level: courseData?.level || "Beginner",
-//             }}
-//           >
-//             <div className="flex justify-center w-full">
-//               <button className="w-[80%] bg-[#631D11] text-white px-8 py-3 rounded-2xl font-bold text-xl hover:text-[#631D11] hover:bg-[#d6b15c] transition-all flex items-center justify-center gap-2 shadow-lg">
-//                 Inquiry <span className="text-2xl">→</span>
-//               </button>
-//             </div>
-//           </Link>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };a
-
-// export default SidebarCard;
 import React, { useState, useEffect } from "react";
-import { CheckCircle, Flame } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuthHook";
 import { getMyEnrollments } from "../../lib/api";
@@ -175,55 +7,24 @@ import { getMyEnrollments } from "../../lib/api";
 const SidebarCard = ({ price, courseData }) => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [leftSeats, setLeftSeats] = useState(0);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [checkingEnrollment, setCheckingEnrollment] = useState(false);
-  const totalSeats = 25;
-  const targetLeft = 4;
   const [visibleFeatures, setVisibleFeatures] = useState(0);
 
   const courseId = courseData?._id || courseData?.id;
 
-  // Check if already enrolled
-  // useEffect(() => {
-  //   if (!isAuthenticated || !courseId) return;
-
-  //   const check = async () => {
-  //     try {
-  //       setCheckingEnrollment(true);
-  //       const res = await getMyEnrollments();
-  //       const enrollments = res?.data || res?.enrollments || res || [];
-  //       const enrolled = enrollments.some(
-  //         (e) => (e.course?._id || e.course || e.courseId) === courseId,
-  //       );
-  //       setIsEnrolled(enrolled);
-  //     } catch (err) {
-  //       console.error("Enrollment check failed", err);
-  //     } finally {
-  //       setCheckingEnrollment(false);
-  //     }
-  //   };
-
-  //   check();
-  // }, [isAuthenticated, courseId]);
   useEffect(() => {
     if (!isAuthenticated || !courseId) return;
-
     const check = async () => {
       try {
         setCheckingEnrollment(true);
-
         const res = await getMyEnrollments();
-        console.log("swarup das check", res);
         const enrollments = res?.data || res?.enrollments || res || [];
-
         const enrolled = enrollments.some((e) => {
           const enrolledCourseId =
             e?.course?._id || e?.courseId || e?.course || null;
-
           return enrolledCourseId?.toString() === courseId?.toString();
         });
-
         setIsEnrolled(enrolled);
       } catch (err) {
         console.error("Enrollment check failed", err);
@@ -231,7 +32,6 @@ const SidebarCard = ({ price, courseData }) => {
         setCheckingEnrollment(false);
       }
     };
-
     check();
   }, [isAuthenticated, courseId]);
 
@@ -251,13 +51,6 @@ const SidebarCard = ({ price, courseData }) => {
   ];
 
   useEffect(() => {
-    if (leftSeats < targetLeft) {
-      const timer = setTimeout(() => setLeftSeats((prev) => prev + 1), 150);
-      return () => clearTimeout(timer);
-    }
-  }, [leftSeats]);
-
-  useEffect(() => {
     if (visibleFeatures < features.length) {
       const timer = setTimeout(
         () => setVisibleFeatures((prev) => prev + 1),
@@ -267,8 +60,6 @@ const SidebarCard = ({ price, courseData }) => {
     }
   }, [visibleFeatures]);
 
-  const progressPercent = ((totalSeats - targetLeft) / totalSeats) * 100;
-
   const enrollState = !isAuthenticated
     ? "guest"
     : checkingEnrollment
@@ -277,103 +68,152 @@ const SidebarCard = ({ price, courseData }) => {
         ? "enrolled"
         : "available";
 
+  /* Octagonal clip — 8 sides, cuts all corners */
+  const octagonClip =
+    "polygon(20px 0%, calc(100% - 20px) 0%, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0% calc(100% - 20px), 0% 20px)";
+
+  /* Chamfered button shape */
+  const chamferBtn =
+    "polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)";
+
   return (
-    <div className="sticky top-10 bg-white rounded-[24px] overflow-hidden shadow-xl border border-gray-100 max-w-[380px] min-h-[650px] flex flex-col">
-      <div className="relative bg-[#74271E] p-8 text-white text-center flex-none">
+    <div
+      className="sticky top-10 max-w-[380px] flex flex-col overflow-hidden"
+      style={{
+        clipPath: octagonClip,
+        background: "#fff",
+        boxShadow: "0 24px 70px rgba(90,54,38,0.18)",
+      }}
+    >
+      {/* ── Diagonal clipped Price Header ── */}
+      <div
+        className="relative px-8 pt-8 pb-20 text-white text-center overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #5A3626 0%, #bb6A45 100%)",
+          clipPath: "polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)",
+          marginBottom: "-2rem",
+        }}
+      >
+        {/* Dot grid texture */}
         <div
-          className="absolute top-0 right-0 w-25 h-10 bg-[#d6b15c]"
-          style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-        ></div>
-        <p className="text-[12px] uppercase tracking-[0.25em] font-bold text-stone-300 mb-2">
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #d19A5B 1px, transparent 1px)",
+            backgroundSize: "20px 20px",
+          }}
+        />
+        {/* Rotating diamond */}
+        <div
+          className="absolute -top-6 -right-6 w-24 h-24 rotate-45 opacity-15"
+          style={{ backgroundColor: "#d19A5B" }}
+        />
+
+        <p
+          className="text-[11px] uppercase tracking-[0.3em] font-bold mb-3"
+          style={{ color: "rgba(242,230,217,0.65)" }}
+        >
           Full Course Fee
         </p>
-        <div className="flex items-center justify-center gap-3 mt-4">
-          <span className="text-4xl font-extrabold tracking-tight">
+        <div className="flex items-baseline justify-center gap-3">
+          <span className="text-5xl font-black tracking-tight">
             ₹{formatPrice(price)}
           </span>
-          <span className="text-xl line-through text-stone-400 font-medium">
+          <span
+            className="text-lg line-through font-medium"
+            style={{ color: "rgba(242,230,217,0.4)" }}
+          >
             ₹{formatPrice(price * 3)}
           </span>
         </div>
-        <div className="mt-6 inline-block bg-[#d6b15c] text-[#3D1A16] text-[11px] font-bold px-6 py-2 rounded-full shadow-md">
-          MONTHLY EMI STARTS
+        {/* Parallelogram EMI badge */}
+        <div
+          className="mt-4 inline-block text-[11px] font-black px-7 py-2 uppercase tracking-widest"
+          style={{
+            backgroundColor: "#d19A5B",
+            color: "#5A3626",
+            clipPath: "polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%)",
+          }}
+        >
+          Monthly EMI Starts
         </div>
       </div>
 
-      <div className="p-8 flex-grow flex flex-col justify-between space-y-6">
-        <div className="space-y-6">
-          {/* <div className="space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="flex gap-2">
-                <Flame size={22} className="text-[#d6b15c] fill-[#d6b15c]" />
-                <span className="text-[#631D11] font-bold text-[15px] leading-tight">
-                  Limited Seats
-                  <br />
-                  Remaining
-                </span>
-              </div>
-              <span className="font-extrabold text-[#631D11] text-right text-[15px]">
-                {leftSeats} / {totalSeats}
-                <br />
-                <span className="font-medium text-[12px] text-gray-500 uppercase tracking-wide">
-                  left
-                </span>
-              </span>
-            </div>
-            <div className="w-full bg-[#F3F0E9] h-3.5 rounded-full overflow-hidden">
+      {/* ── Features List ── */}
+      <div className="px-7 pt-10 pb-4">
+        <ul className="space-y-4">
+          {features.map((item, i) => (
+            <li
+              key={i}
+              className={`flex gap-3 items-start leading-snug transition-all duration-500 ${
+                i < visibleFeatures
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-4"
+              }`}
+            >
+              {/* Diamond check instead of circle */}
               <div
-                className="bg-[#d6b15c] h-full rounded-full shadow-inner transition-all duration-1000"
-                style={{ width: `${leftSeats > 0 ? progressPercent : 0}%` }}
-              ></div>
-            </div>
-          </div> */}
-
-          <ul className="space-y-6">
-            {features.map((item, i) => (
-              <li
-                key={i}
-                className={`flex gap-7 items-start leading-snug transition-all duration-500 ${i < visibleFeatures
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 -translate-x-4"
-                  }`}
+                className="flex-shrink-0 mt-1 w-5 h-5 rotate-45 flex items-center justify-center"
+                style={{ backgroundColor: "rgba(209,154,91,0.2)" }}
               >
                 <CheckCircle
-                  size={24}
-                  className={`text-[#d6b15c] shrink-0 transition-transform duration-500 ${i < visibleFeatures ? "scale-100" : "scale-0"
-                    }`}
-                  fill="#B18E401A"
-                  strokeWidth={2.5}
+                  size={10}
+                  style={{
+                    color: "#d19A5B",
+                    transform: "rotate(-45deg)",
+                  }}
+                  strokeWidth={3}
                 />
-                <span className="text-[#7A5C58] font-bold text-[18px]">
-                  {item}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+              </div>
+              <span
+                className="font-semibold text-[15px]"
+                style={{ color: "#A46A3F" }}
+              >
+                {item}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        {/* Buttons */}
-        <div className="flex flex-col space-y-6 ">
-          {/* ENROLL BUTTON */}
-          {enrollState === "enrolled" ? (
-            <div className="flex justify-center w-full">
-              <div className="w-[80%] bg-green-600 text-white px-8 py-3 rounded-2xl font-bold text-xl flex items-center justify-center gap-2 shadow-lg cursor-default">
-                <CheckCircle size={22} /> Already Purchased
-              </div>
-            </div>
-          ) : enrollState === "checking" ? (
-            <div className="flex justify-center w-full">
-              <div className="w-[80%] bg-gray-300 text-gray-600 px-8 py-3 rounded-2xl font-bold text-xl flex items-center justify-center gap-2">
-                Checking...
-              </div>
-            </div>
-          ) : (
-            <Link
-              to={isAuthenticated ? "/courseBuy" : "/login"}
-              className="w-full"
-              state={
-                isAuthenticated
-                  ? {
+      {/* ── Buttons ── */}
+      <div className="px-7 pb-8 pt-3 flex flex-col gap-3">
+        <div
+          className="w-full h-px mb-1"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgba(164,106,63,0.2), transparent)",
+          }}
+        />
+
+        {enrollState === "enrolled" ? (
+          <div
+            className="w-full py-4 font-bold text-lg flex items-center justify-center gap-2 text-white"
+            style={{
+              clipPath: chamferBtn,
+              backgroundColor: "#3B6D11",
+            }}
+          >
+            <CheckCircle size={20} /> Already Purchased
+          </div>
+        ) : enrollState === "checking" ? (
+          <div
+            className="w-full py-4 font-bold text-lg flex items-center justify-center"
+            style={{
+              clipPath: chamferBtn,
+              backgroundColor: "rgba(164,106,63,0.12)",
+              color: "#A46A3F",
+            }}
+          >
+            Checking...
+          </div>
+        ) : (
+          <Link
+            to={isAuthenticated ? "/courseBuy" : "/login"}
+            className="w-full"
+            state={
+              isAuthenticated
+                ? {
                     courseId,
                     courseName: courseData?.title,
                     price: courseData?.price,
@@ -383,36 +223,52 @@ const SidebarCard = ({ price, courseData }) => {
                     language: courseData?.language,
                     mode: "Live Online",
                   }
-                  : { from: `/coursedetail/${courseId}` }
-              }
+                : { from: `/coursedetail/${courseId}` }
+            }
+          >
+            <button
+              className="w-full py-4 font-bold text-lg text-white flex items-center justify-center gap-2 transition-all duration-300 relative overflow-hidden group"
+              style={{
+                clipPath: chamferBtn,
+                background: "linear-gradient(135deg, #bb6A45 0%, #5A3626 100%)",
+                boxShadow: "0 8px 28px rgba(187,106,69,0.38)",
+              }}
             >
-              <div className="flex justify-center w-full">
-                <button className="w-[80%] bg-[#631D11] text-white px-8 py-3 rounded-2xl font-bold text-xl hover:text-[#631D11] hover:bg-[#d6b15c] transition-all flex items-center justify-center gap-2 shadow-lg">
-                  {isAuthenticated ? "Enroll Now" : "Enroll Now"}{" "}
-                  <span className="text-2xl">→</span>
-                </button>
-              </div>
-            </Link>
-          )}
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+              <span className="relative z-10">Enroll Now</span>
+              <span className="relative z-10 text-xl">→</span>
+            </button>
+          </Link>
+        )}
 
-          {/* INQUIRY BUTTON */}
-          <Link
-            to="/inquiry"
-            className="w-full"
-            state={{
-              courseName: courseData?.title || "Sanskrit for Beginners",
-              duration: courseData?.duration || "6 Months",
-              language: courseData?.language || "Sanskrit/Hindi",
-              level: courseData?.level || "Prathama (Beginner)",
+        <Link
+          to="/inquiry"
+          className="w-full"
+          state={{
+            courseName: courseData?.title || "Sanskrit for Beginners",
+            duration: courseData?.duration || "6 Months",
+            language: courseData?.language || "Sanskrit/Hindi",
+            level: courseData?.level || "Prathama (Beginner)",
+          }}
+        >
+          <button
+            className="w-full py-4 font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300"
+            style={{
+              clipPath: chamferBtn,
+              border: "2px solid #bb6A45",
+              color: "#bb6A45",
+              background: "transparent",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(187,106,69,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
             }}
           >
-            <div className="flex justify-center w-full">
-              <button className="w-[80%] bg-[#631D11] text-white px-8 py-3 rounded-2xl font-bold text-xl hover:text-[#631D11] hover:bg-[#d6b15c] transition-all flex items-center justify-center gap-2 shadow-lg">
-                Inquiry <span className="text-2xl">→</span>
-              </button>
-            </div>
-          </Link>
-        </div>
+            Inquiry <span className="text-xl">→</span>
+          </button>
+        </Link>
       </div>
     </div>
   );
