@@ -105,39 +105,46 @@ export default function PrivacyPolicy() {
       <div className="w-full px-4 sm:px-6 lg:pl-16 lg:pr-16 py-10 sm:py-14 lg:py-16 grid grid-cols-1 lg:grid-cols-[270px_1fr] gap-6 lg:gap-20">
 
         {/* DESKTOP SIDEBAR — sticky fix */}
-        <motion.aside
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="hidden lg:block rounded-2xl p-6 h-fit shadow-lg overflow-hidden"
-          style={{ backgroundColor: "#5a3626", position: "sticky", top: "6rem", alignSelf: "start" }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: "url(https://i.pinimg.com/736x/a1/d1/a4/a1d1a4f0e226fe4bb35f97e51aca6eb6.jpg)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              opacity: 0.3,
-              borderRadius: "inherit",
-            }}
-          />
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <h3 className="font-serif font-bold text-white mb-2 text-2xl">
-              Table of Contents
-            </h3>
-            <div className="w-14 h-[2px] bg-[#d6b25e] mb-4" />
-            <div className="flex flex-col gap-1 text-sm">
-              <a href="#introduction" onClick={() => setActive("introduction")} className="block px-3 py-2 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "introduction" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Introduction</a>
-              <a href="#data-collection" onClick={() => setActive("data-collection")} className="block px-3 py-2 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "data-collection" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Data Collection</a>
-              <a href="#use-of-data" onClick={() => setActive("use-of-data")} className="block px-3 py-2 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "use-of-data" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Use of Data</a>
-              <a href="#children-info" onClick={() => setActive("children-info")} className="block px-3 py-2 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "children-info" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>{"Children's Information"}</a>
-              <a href="#contact-info" onClick={() => setActive("contact-info")} className="block px-3 py-2 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "contact-info" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Contact Information</a>
-            </div>
-          </div>
-        </motion.aside>
+       <motion.aside
+  initial={{ opacity: 0, x: -30 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.6 }}
+  className="hidden lg:block rounded-2xl p-6 shadow-lg overflow-hidden"
+  style={{
+    backgroundColor: "#5a3626",
+    position: "relative",
+    top: "1rem",
+    alignSelf: "start",
+    height: "fit-content",
+    minHeight: "350px",
+  }}
+>
+  <div
+    style={{
+      position: "absolute",
+      inset: 0,
+      backgroundImage: "url(https://i.pinimg.com/736x/a1/d1/a4/a1d1a4f0e226fe4bb35f97e51aca6eb6.jpg)",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      opacity: 0.3,
+      borderRadius: "inherit",
+    }}
+  />
+  <div style={{ position: "relative", zIndex: 1 }}>
+    <h3 className="font-serif font-bold text-white mb-2 text-2xl">
+      Table of Contents
+    </h3>
+    <div className="w-14 h-[2px] bg-[#d6b25e] mb-5" />
+    <div className="flex flex-col gap-2 text-sm">
+      <a href="#introduction" onClick={() => setActive("introduction")} className="block px-3 py-2.5 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "introduction" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Introduction</a>
+      <a href="#data-collection" onClick={() => setActive("data-collection")} className="block px-3 py-2.5 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "data-collection" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Data Collection</a>
+      <a href="#use-of-data" onClick={() => setActive("use-of-data")} className="block px-3 py-2.5 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "use-of-data" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Use of Data</a>
+      <a href="#children-info" onClick={() => setActive("children-info")} className="block px-3 py-2.5 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "children-info" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>{"Children's Information"}</a>
+      <a href="#contact-info" onClick={() => setActive("contact-info")} className="block px-3 py-2.5 rounded-md border-l-4 transition-all duration-200 hover:bg-white/10 hover:translate-x-1" style={active === "contact-info" ? { borderColor: "#d6b25e", backgroundColor: "rgba(0,0,0,0.20)", color: "white" } : { borderColor: "transparent", color: "white" }}>Contact Information</a>
+    </div>
+  </div>
+</motion.aside>
 
         {/* CONTENT */}
         <motion.div

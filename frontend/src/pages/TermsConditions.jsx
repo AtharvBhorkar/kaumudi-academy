@@ -185,7 +185,7 @@ export default function TermsCondition() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="hidden lg:block rounded-2xl p-6 h-fit shadow-lg overflow-hidden"
-          style={{ backgroundColor: "#5a3626", position: "sticky", top: "6rem", alignSelf: "start" }}
+          style={{ backgroundColor: "#5a3626", position: "relative", top: "1rem", alignSelf: "start" }}
         >
           <div
             style={{
