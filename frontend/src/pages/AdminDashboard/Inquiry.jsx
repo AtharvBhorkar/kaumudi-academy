@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import {
   Send,
@@ -28,7 +28,7 @@ export default function Inquiry() {
   const [form, setForm] = useState({
     fullName: "",
     vedicName: "",
-    whatsappNumber: "", // ✅ FIXED: matches schema field name directly
+    whatsappNumber: "",
     email: "",
     preferredLevel: "BEGINNER",
     message: "",
@@ -52,7 +52,7 @@ export default function Inquiry() {
         fullName: form.fullName,
         vedicName: form.vedicName || "",
         email: form.email,
-        whatsappNumber: form.whatsappNumber, // ✅ FIXED: correct field name for schema
+        whatsappNumber: form.whatsappNumber,
         preferredLevel: form.preferredLevel.toUpperCase(),
         message: form.message || "",
         course: {
@@ -85,48 +85,119 @@ export default function Inquiry() {
     window.scrollTo(0, 0);
   }, []);
 
-  const inputStyle =
-    "w-full border-b-2 bg-white/40 backdrop-blur-sm p-4 outline-none border-[#641e16]/20 focus:border-[#641e16] focus:bg-white/60 transition-all duration-300 rounded-t-lg placeholder:text-[#8d6e6a]";
+  const inputStyle = [
+    "w-full bg-white/10 border border-white/30",
+    "backdrop-blur-xl",
+    "p-4 outline-none",
+    "focus:border-[#bb6A45]/70 focus:bg-white/20",
+    "transition-all duration-300",
+    "placeholder:text-[#A46A3F]/50 text-[#5A3626]",
+    "shadow-inner shadow-white/10",
+  ].join(" ");
+
+  // Chamfered shape — top-left + bottom-right cuts (consistent with other components)
+  const chamferStyle = {
+    clipPath:
+      "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
+  };
+
   const labelStyle =
-    "text-[10px] uppercase tracking-[2px] font-bold text-[#641e16] mb-1 ml-1 flex items-center gap-2";
+    "text-[10px] uppercase tracking-[2px] font-bold text-[#bb6A45] mb-1 ml-1 flex items-center gap-2";
 
   return (
-    <div className="min-h-screen bg-[#f1e4c8] text-[#2b1d1b] font-sans-serif relative overflow-hidden">
-      {/* --- Decorative Background Elements --- */}
+    <div
+      className="min-h-screen text-[#5A3626] font-sans relative overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(135deg, #F2E6D9 0%, #e8d5c0 40%, #f5e8d5 70%, #eeddc8 100%)",
+      }}
+    >
+      {/* ── Layered background blobs ── */}
+      <div
+        className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at 40% 40%, rgba(209,154,91,0.35) 0%, rgba(209,154,91,0.08) 50%, transparent 75%)",
+          filter: "blur(40px)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute top-1/3 -right-32 w-[500px] h-[500px] rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at 60% 60%, rgba(187,106,69,0.28) 0%, rgba(187,106,69,0.06) 55%, transparent 75%)",
+          filter: "blur(50px)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-32 left-1/4 w-[450px] h-[450px] rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(242,230,217,0.5) 0%, transparent 70%)",
+          filter: "blur(35px)",
+        }}
+      />
 
-      {/* --- Hero Section --- */}
-      <section className="relative text-center pt-9 pb-12 px-6">
+      {/* Grain overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "256px 256px",
+        }}
+      />
+
+      {/* ── Hero Section ── */}
+      <section className="relative text-center pt-10 pb-12 px-6">
+        {/* Parallelogram badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="inline-block mb-4 px-4 py-1 rounded-full border border-[#641e16]/20 bg-[#641e16]/5 text-[#641e16] text-lg font-bold tracking-widest uppercase"
+          className="inline-flex items-center mb-5 px-8 py-2 text-sm font-bold tracking-widest uppercase"
+          style={{
+            background: "rgba(255,255,255,0.25)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,0.5)",
+            boxShadow:
+              "0 4px 16px rgba(187,106,69,0.12), inset 0 1px 0 rgba(255,255,255,0.6)",
+            color: "#bb6A45",
+            clipPath: "polygon(16px 0, 100% 0, calc(100% - 16px) 100%, 0 100%)",
+          }}
         >
-          Inquiry Form
+          ✦ Inquiry Form ✦
         </motion.div>
+
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-4xl md:text-6xl font-bold text-[#641e16] leading-tight"
+          className="text-4xl md:text-6xl font-bold leading-tight"
+          style={{ color: "#5A3626" }}
         >
           Begin Your{" "}
-          <span className="italic font-sans-serif text-[#b38b3f]">Journey</span>{" "}
+          <span className="italic" style={{ color: "#d19A5B" }}>
+            Journey
+          </span>{" "}
           <br />
           with Kaumudi
         </motion.h2>
+
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 max-w-2xl mx-auto text-[#5f4b48] text-lg leading-relaxed"
+          className="mt-6 max-w-2xl mx-auto text-lg leading-relaxed"
+          style={{ color: "#A46A3F" }}
         >
           Connecting seekers with the wisdom of Sanskrit learning. Fill the form
           and our scholars will reach out to you within 24 hours.
         </motion.p>
       </section>
 
-      {/* --- Main Content Section --- */}
+      {/* ── Main Content Section ── */}
       <section className="max-w-6xl mx-auto px-6 grid lg:grid-cols-12 gap-10 pb-24 relative z-10 justify-center">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -135,26 +206,99 @@ export default function Inquiry() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="lg:col-span-8 lg:col-start-3 relative"
         >
-          <div className="absolute -top-6 -right-6 w-20 h-20 bg-[#d6b15c] rounded-2xl rotate-12 -z-10 shadow-lg hidden md:block opacity-50" />
+          {/* Decorative chamfered orb — top right */}
+          <div
+            className="absolute -top-8 -right-8 w-20 h-20 rotate-12 -z-10 hidden md:block"
+            style={{
+              background: "rgba(209,154,91,0.35)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.45)",
+              boxShadow: "0 8px 32px rgba(209,154,91,0.25)",
+              clipPath:
+                "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
+            }}
+          />
+          {/* Bottom-left accent */}
+          <div
+            className="absolute -bottom-6 -left-8 w-14 h-14 -rotate-6 -z-10 hidden md:block"
+            style={{
+              background: "rgba(187,106,69,0.25)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.35)",
+              boxShadow: "0 6px 24px rgba(187,106,69,0.2)",
+              clipPath:
+                "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
+            }}
+          />
 
-          <div className="bg-white/50 backdrop-blur-md rounded-3xl shadow-[0_20px_50px_rgba(100,30,22,0.15)] border border-white/50 p-6 md:p-12 overflow-hidden relative">
+          {/* ── Main Glass Card — chamfered octagon ── */}
+          <div
+            className="p-6 md:p-12 overflow-hidden relative"
+            style={{
+              clipPath:
+                "polygon(32px 0, 100% 0, 100% calc(100% - 32px), calc(100% - 32px) 100%, 0 100%, 0 32px)",
+              background: "rgba(255, 255, 255, 0.22)",
+              backdropFilter: "blur(32px) saturate(180%)",
+              WebkitBackdropFilter: "blur(32px) saturate(180%)",
+              border: "1px solid rgba(255, 255, 255, 0.6)",
+              boxShadow:
+                "0 20px 60px rgba(90, 54, 38, 0.15), 0 4px 16px rgba(90,54,38,0.08), inset 0 1px 0 rgba(255,255,255,0.8)",
+            }}
+          >
+            {/* Top shine strip */}
+            <div
+              className="absolute top-0 left-0 right-0 h-px"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 40%, rgba(255,255,255,0.9) 60%, transparent 100%)",
+              }}
+            />
+            {/* Left edge highlight */}
+            <div
+              className="absolute top-0 left-0 bottom-0 w-px"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)",
+              }}
+            />
+
             {/* Form Header */}
-            <div className="flex items-center gap-4 mb-10 border-b border-[#641e16]/10 pb-6">
-              <div className="w-12 h-12 bg-[#641e16] rounded-xl flex items-center justify-center text-white shadow-lg">
-                <Send size={24} />
+            <div
+              className="flex items-center gap-4 mb-10 pb-6"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.35)" }}
+            >
+              {/* Chamfered icon box */}
+              <div
+                className="w-12 h-12 flex items-center justify-center shadow-lg"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(187,106,69,0.9), rgba(164,106,63,0.85))",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255,255,255,0.35)",
+                  boxShadow:
+                    "0 4px 16px rgba(187,106,69,0.4), inset 0 1px 0 rgba(255,255,255,0.3)",
+                  color: "white",
+                  clipPath:
+                    "polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)",
+                }}
+              >
+                <Send size={22} />
               </div>
               <div>
-                <h3 className="text-3xl text-[#641e16] font-bold">
+                <h3 className="text-3xl font-bold" style={{ color: "#5A3626" }}>
                   Course Inquiry
                 </h3>
-                <p className="text-sm text-[#7a5c58]">
+                <p className="text-sm" style={{ color: "#A46A3F" }}>
                   Please provide your details below
                 </p>
               </div>
             </div>
 
             <form className="grid gap-8" onSubmit={handleSubmit}>
-              {/* User Basic Info Group */}
+              {/* Full Name + WhatsApp */}
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label className={labelStyle}>
@@ -162,6 +306,7 @@ export default function Inquiry() {
                   </label>
                   <input
                     className={inputStyle}
+                    style={chamferStyle}
                     placeholder="E.g. Rahul Sharma"
                     name="fullName"
                     value={form.fullName}
@@ -175,6 +320,7 @@ export default function Inquiry() {
                   </label>
                   <input
                     className={inputStyle}
+                    style={chamferStyle}
                     placeholder="10-digit number"
                     name="whatsappNumber"
                     value={form.whatsappNumber}
@@ -184,12 +330,14 @@ export default function Inquiry() {
                 </div>
               </div>
 
+              {/* Email */}
               <div className="space-y-2">
                 <label className={labelStyle}>
                   <Mail size={14} /> Email Address
                 </label>
                 <input
                   className={inputStyle}
+                  style={chamferStyle}
                   placeholder="rahul@example.com"
                   type="email"
                   name="email"
@@ -199,6 +347,7 @@ export default function Inquiry() {
                 />
               </div>
 
+              {/* Preferred Level + Vedic Name */}
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label className={labelStyle}>
@@ -209,6 +358,7 @@ export default function Inquiry() {
                     value={form.preferredLevel}
                     onChange={handleChange}
                     className={inputStyle}
+                    style={{ ...chamferStyle, appearance: "none" }}
                   >
                     <option value="BEGINNER">Beginner</option>
                     <option value="INTERMEDIATE">Intermediate</option>
@@ -221,6 +371,7 @@ export default function Inquiry() {
                   </label>
                   <input
                     className={inputStyle}
+                    style={chamferStyle}
                     placeholder="If any"
                     name="vedicName"
                     value={form.vedicName}
@@ -229,60 +380,83 @@ export default function Inquiry() {
                 </div>
               </div>
 
-              {/* Pre-filled Course Details Box */}
-              <div className="bg-[#641e16]/5 p-6 md:p-8 rounded-2xl border-2 border-dashed border-[#641e16]/90 relative group overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-30 group-hover:opacity-40 transition-opacity">
+              {/* Pre-filled Course Details — chamfered glass box */}
+              <div
+                className="p-6 md:p-8 relative group overflow-hidden"
+                style={{
+                  clipPath:
+                    "polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)",
+                  background: "rgba(255, 255, 255, 0.15)",
+                  backdropFilter: "blur(20px) saturate(150%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(150%)",
+                  border: "1px dashed rgba(255,255,255,0.5)",
+                  boxShadow:
+                    "0 4px 24px rgba(187,106,69,0.08), inset 0 1px 0 rgba(255,255,255,0.6)",
+                }}
+              >
+                <div
+                  className="absolute top-0 left-8 right-8 h-px"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)",
+                  }}
+                />
+                <div
+                  className="absolute top-0 right-0 p-4 transition-opacity opacity-10 group-hover:opacity-20"
+                  style={{ color: "#bb6A45" }}
+                >
                   <BookOpen size={80} />
                 </div>
 
-                <p className="text-xs font-black text-[#641e16]/80 mb-6 uppercase tracking-[3px] opacity-70">
+                <p
+                  className="text-xs font-black mb-6 uppercase tracking-[3px]"
+                  style={{ color: "#A46A3F" }}
+                >
                   Selected Course Details
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-y-6 gap-x-10">
-                  <div className="flex flex-col border-l-2 border-[#641e16]/20 pl-4">
-                    <label className="text-[10px] text-[#8d6e6a] uppercase font-bold">
-                      Course Title
-                    </label>
-                    <input
-                      className="bg-transparent text-[#641e16] font-bold text-lg outline-none py-1 cursor-default"
-                      value={courseData.title}
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="flex flex-col border-l-2 border-[#641e16]/20 pl-4">
-                    <label className="text-[10px] text-[#8d6e6a] uppercase font-bold flex items-center gap-1">
-                      <Clock size={10} /> Duration
-                    </label>
-                    <input
-                      className="bg-transparent text-[#641e16] font-bold outline-none py-1 cursor-default"
-                      value={courseData.duration}
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="flex flex-col border-l-2 border-[#641e16]/20 pl-4">
-                    <label className="text-[10px] text-[#8d6e6a] uppercase font-bold flex items-center gap-1">
-                      <Globe size={10} /> Language
-                    </label>
-                    <input
-                      className="bg-transparent text-[#641e16] font-bold outline-none py-1 cursor-default"
-                      value={courseData.language}
-                      readOnly
-                    />
-                  </div>
-
-                  <div className="flex flex-col border-l-2 border-[#641e16]/20 pl-4">
-                    <label className="text-[10px] text-[#8d6e6a] uppercase font-bold flex items-center gap-1">
-                      <Award size={10} /> Level
-                    </label>
-                    <input
-                      className="bg-transparent text-[#641e16] font-bold outline-none py-1 cursor-default"
-                      value={courseData.level}
-                      readOnly
-                    />
-                  </div>
+                  {[
+                    {
+                      label: "Course Title",
+                      value: courseData.title,
+                      icon: null,
+                    },
+                    {
+                      label: "Duration",
+                      value: courseData.duration,
+                      icon: <Clock size={10} />,
+                    },
+                    {
+                      label: "Language",
+                      value: courseData.language,
+                      icon: <Globe size={10} />,
+                    },
+                    {
+                      label: "Level",
+                      value: courseData.level,
+                      icon: <Award size={10} />,
+                    },
+                  ].map(({ label, value, icon }) => (
+                    <div
+                      key={label}
+                      className="flex flex-col pl-4"
+                      style={{ borderLeft: "2px solid rgba(255,255,255,0.5)" }}
+                    >
+                      <label
+                        className="text-[10px] uppercase font-bold flex items-center gap-1"
+                        style={{ color: "#A46A3F" }}
+                      >
+                        {icon} {label}
+                      </label>
+                      <input
+                        className="bg-transparent font-bold text-lg outline-none py-1 cursor-default"
+                        style={{ color: "#5A3626" }}
+                        value={value}
+                        readOnly
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -292,7 +466,8 @@ export default function Inquiry() {
                   <MessageCircle size={14} /> Your Message
                 </label>
                 <textarea
-                  className={`${inputStyle} rounded-lg`}
+                  className={`${inputStyle} resize-none`}
+                  style={chamferStyle}
                   rows="4"
                   placeholder="Tell us about your learning goals or any specific concerns..."
                   name="message"
@@ -302,20 +477,67 @@ export default function Inquiry() {
                 />
               </div>
 
+              {/* Error / Success — chamfered alerts */}
               {error && (
-                <div className="text-red-600 font-semibold">{error}</div>
+                <div
+                  className="px-5 py-4 text-sm font-semibold"
+                  style={{
+                    clipPath:
+                      "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
+                    background: "rgba(220,38,38,0.08)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(220,38,38,0.25)",
+                    color: "#dc2626",
+                  }}
+                >
+                  {error}
+                </div>
               )}
               {success && (
-                <div className="text-green-700 font-semibold">{success}</div>
+                <div
+                  className="px-5 py-4 text-sm font-semibold"
+                  style={{
+                    clipPath:
+                      "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)",
+                    background: "rgba(59,109,17,0.08)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(59,109,17,0.25)",
+                    color: "#3B6D11",
+                  }}
+                >
+                  {success}
+                </div>
               )}
 
-              {/* Submit Button */}
+              {/* Submit Button — chamfered */}
               <motion.button
-                whileHover={{ scale: 1.02, backgroundColor: "#4d1711" }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 disabled={loading}
-                className="relative overflow-hidden group bg-[#641e16] text-white py-5 rounded-2xl font-bold text-lg shadow-2xl transition-all duration-300 flex items-center justify-center gap-3"
+                className="relative overflow-hidden group text-white py-5 font-bold text-lg flex items-center justify-center gap-3 transition-all duration-300"
+                style={{
+                  clipPath:
+                    "polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)",
+                  background:
+                    "linear-gradient(135deg, rgba(187,106,69,0.92) 0%, rgba(164,106,63,0.88) 100%)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  boxShadow:
+                    "0 8px 32px rgba(187,106,69,0.4), inset 0 1px 0 rgba(255,255,255,0.25)",
+                }}
               >
+                <div
+                  className="absolute top-0 left-0 right-0 h-px"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)",
+                  }}
+                />
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
                 <span className="relative z-10">
                   {loading ? "Sending..." : "Send Inquiry"}
                 </span>
@@ -323,14 +545,17 @@ export default function Inquiry() {
                   size={20}
                   className="relative z-10 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </motion.button>
 
-              <p className="text-center text-xs text-[#8d6e6a]">
+              <p className="text-center text-xs" style={{ color: "#A46A3F" }}>
                 By clicking send, you agree to our{" "}
-                <span className="underline cursor-pointer hover:text-[#641e16]">
-                  <Link to="/privacy">Privacy Policy</Link>
-                </span>
+                <Link
+                  to="/privacy"
+                  className="underline cursor-pointer transition-colors"
+                  style={{ color: "#bb6A45" }}
+                >
+                  Privacy Policy
+                </Link>
                 .
               </p>
             </form>
