@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const CurriculumAccordion = ({ curriculumData }) => {
-  const [openIndex, setOpenIndex] = useState(-1);
+  const [openIndex, setOpenIndex] = useState(0);
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem("kaumudi_token");
 
