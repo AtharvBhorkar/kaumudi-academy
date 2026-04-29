@@ -506,7 +506,7 @@ const CourseManagement = () => {
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src =
-                      "https://via.placeholder.com/400x200?text=Course+Image";
+                      "https://placehold.co/400x200";
                   }}
                 />
               ) : (

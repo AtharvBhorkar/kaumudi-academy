@@ -461,10 +461,10 @@ const AllCoursesPage = () => {
         />
 
         <div className="relative z-10 flex flex-col items-center justify-center text-center"
-          style={{ height: "100dvh" }}
           style={{
             /* BEFORE: px-4 sm:px-8 — used Tailwind classes that didn't apply inside style prop */
             /* AFTER: symmetric clamp padding so nothing clips on any width ≥ 320px */
+            height: "100dvh",
             padding: "4.5rem clamp(1.25rem,6vw,5rem)",
             minHeight: "100dvh",
             boxSizing: "border-box",
@@ -722,7 +722,7 @@ const AllCoursesPage = () => {
                         view === "list" ? "w-full sm:w-44 md:w-52" : "w-full"].join(" ")}
                       style={view === "list" ? { minHeight: 160 } : { aspectRatio: "16/10" }}
                     >
-                      <img src={course.image} alt={course.title}
+                      <img src={course.image?.url || "https://placehold.co/300x200"} alt={course.title}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                         loading="lazy"
                         style={view === "list" ? { height: "100%", minHeight: 160, objectFit: "cover" } : {}}

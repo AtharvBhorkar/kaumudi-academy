@@ -10,9 +10,9 @@ import { useAuth } from "../context/useAuthHook";
 ───────────────────────────────────────── */
 
 const NAV_ITEMS = [
-  { label: "Home",    to: "/" },
+  { label: "Home", to: "/" },
   { label: "Courses", to: "/allcourses" },
-  { label: "About",   to: "/about" },
+  { label: "About", to: "/about" },
   { label: "Faculty", to: "/faculty" },
   { label: "Contact", to: "/contact" },
 ];
@@ -25,16 +25,16 @@ const NAV_ITEMS = [
 ───────────────────────────────────────── */
 
 const NEO = {
-  base:       "#2e0d09",
-  surface:    "#3a110d",
-  raised:     "-5px -5px 12px rgba(88,20,10,0.75), 6px 6px 14px rgba(4,0,0,0.92)",
-  raisedSm:   "-3px -3px 7px rgba(88,20,10,0.7), 3px 3px 8px rgba(4,0,0,0.9)",
-  inset:      "inset -3px -3px 7px rgba(88,20,10,0.65), inset 3px 3px 8px rgba(4,0,0,0.9)",
-  gold:       "#d6b15c",
-  goldDark:   "#a8842a",
-  goldGlow:   "0 0 18px rgba(214,177,92,0.35), 0 0 40px rgba(214,177,92,0.12)",
+  base: "#2e0d09",
+  surface: "#3a110d",
+  raised: "-5px -5px 12px rgba(88,20,10,0.75), 6px 6px 14px rgba(4,0,0,0.92)",
+  raisedSm: "-3px -3px 7px rgba(88,20,10,0.7), 3px 3px 8px rgba(4,0,0,0.9)",
+  inset: "inset -3px -3px 7px rgba(88,20,10,0.65), inset 3px 3px 8px rgba(4,0,0,0.9)",
+  gold: "#d6b15c",
+  goldDark: "#a8842a",
+  goldGlow: "0 0 18px rgba(214,177,92,0.35), 0 0 40px rgba(214,177,92,0.12)",
   pillRaised: "-4px -4px 9px rgba(88,20,10,0.7), 4px 4px 10px rgba(4,0,0,0.9)",
-  pillInset:  "inset -2px -2px 6px rgba(88,20,10,0.6), inset 2px 2px 7px rgba(4,0,0,0.88)",
+  pillInset: "inset -2px -2px 6px rgba(88,20,10,0.6), inset 2px 2px 7px rgba(4,0,0,0.88)",
 };
 
 /* ─────────────────────────────────────────
@@ -42,22 +42,22 @@ const NEO = {
 ───────────────────────────────────────── */
 
 const drawerVariants = {
-  hidden:  { opacity: 0, height: 0, y: -8 },
+  hidden: { opacity: 0, height: 0, y: -8 },
   visible: {
     opacity: 1, height: "auto", y: 0,
     transition: { type: "spring", stiffness: 280, damping: 28 },
   },
-  exit:    { opacity: 0, height: 0, y: -6, transition: { duration: 0.2 } },
+  exit: { opacity: 0, height: 0, y: -6, transition: { duration: 0.2 } },
 };
 
 const stagger = {
   hidden: {},
-  show:   { transition: { staggerChildren: 0.055, delayChildren: 0.07 } },
+  show: { transition: { staggerChildren: 0.055, delayChildren: 0.07 } },
 };
 
 const fadeUp = {
   hidden: { opacity: 0, y: 7 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" } },
 };
 
 /* ─────────────────────────────────────────
@@ -65,7 +65,7 @@ const fadeUp = {
 ───────────────────────────────────────── */
 
 export default function Navbar() {
-  const [open, setOpen]       = useState(false);
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, user, loading, logout } = useAuth();
   const { pathname } = useLocation();
@@ -74,8 +74,8 @@ export default function Navbar() {
   const transparentPages = ["/", "/about", "/faculty", "/contact", "/allcourses"];
   const isHome = transparentPages.includes(pathname);
 
-  const role               = user?.role?.toUpperCase();
-  const isStudentLoggedIn  = !loading && isAuthenticated && role === "STUDENT";
+  const role = user?.role?.toUpperCase();
+  const isStudentLoggedIn = !loading && isAuthenticated && role === "STUDENT";
 
   const handleLogout = () => { setOpen(false); logout("/"); };
 
@@ -106,8 +106,8 @@ export default function Navbar() {
   }, [open]);
 
   /* ── helpers ── */
-  const solidBg     = `background: ${NEO.base};`;
-  const navShadow   = `box-shadow: ${NEO.raised}, 0 1px 0 rgba(214,177,92,0.08);`;
+  const solidBg = `background: ${NEO.base};`;
+  const navShadow = `box-shadow: ${NEO.raised}, 0 1px 0 rgba(214,177,92,0.08);`;
   const isTransparent = isHome && !scrolled;
 
   return (
@@ -233,6 +233,7 @@ export default function Navbar() {
         aria-label="Main Navigation"
         className="ksa-nav"
         style={{
+          position: "relative",
           position: isHome ? "fixed" : "sticky",
           top: 0,
           zIndex: 50,
@@ -241,10 +242,10 @@ export default function Navbar() {
           ...(isTransparent
             ? { background: "transparent", boxShadow: "none", borderBottom: "1px solid transparent" }
             : {
-                background: NEO.base,
-                boxShadow: `${NEO.raised}, 0 1px 0 rgba(214,177,92,0.1)`,
-                borderBottom: "1px solid rgba(214,177,92,0.12)",
-              }),
+              background: NEO.base,
+              boxShadow: `${NEO.raised}, 0 1px 0 rgba(214,177,92,0.1)`,
+              borderBottom: "1px solid rgba(214,177,92,0.12)",
+            }),
         }}
       >
         {/* subtle top accent line */}
@@ -256,6 +257,7 @@ export default function Navbar() {
         )}
 
         <div style={{
+          position: "relative",
           maxWidth: 1280,
           margin: "0 auto",
           padding: "0 20px",
@@ -322,7 +324,7 @@ export default function Navbar() {
                   <Link
                     to={to}
                     aria-current={isActive ? "page" : undefined}
-                    className={isActive ? "ksa-neo-pill-active" : "ksa-neo-pill"}
+                    className=""
                     style={{
                       display: "block",
                       padding: "7px 18px",
@@ -400,11 +402,11 @@ export default function Navbar() {
               <AnimatePresence mode="wait" initial={false}>
                 {open
                   ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.18 }}>
-                      <X size={22} color={NEO.gold} />
-                    </motion.span>
+                    <X size={22} color={NEO.gold} />
+                  </motion.span>
                   : <motion.span key="m" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.18 }}>
-                      <Menu size={22} color={NEO.gold} />
-                    </motion.span>
+                    <Menu size={22} color={NEO.gold} />
+                  </motion.span>
                 }
               </AnimatePresence>
             </motion.button>

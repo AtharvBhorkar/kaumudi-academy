@@ -1,82 +1,95 @@
-// import app from "./app.js"
-// import dotenv from "dotenv"
-// import connectDB from "./configs/db.js"
-// import {config} from "./configs/env.js"
-
-// const PORT = config.PORT || 5000
-
-// app.listen(PORT,()=>{
-//   console.log(`server is running on http://localhost:${PORT}`)
-// })
-
-import app from "./app.js";
-import dotenv from "dotenv";
-import connectDB from "./configs/db.js";
-import { config } from "./configs/env.js";
-import nodemailer from "nodemailer"; // 1. Nodemailer import kiya
 import express from "express";
+import cors from "cors";
+import http from "http";
 
-// dotenv config agar config.js mein nahi hai toh
-dotenv.config();
+const app = express();
 
-// Middleware to parse JSON (agar app.js mein nahi hai)
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 
-// --- OTP STORAGE (Temporary) ---
-let otpStore = {};
+app.get("/", (req, res) => {
+  res.send("Backend working 🚀");
+});
 
-// --- NODEMAILER CONFIGURATION ---
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER, // .env se email lein
-    pass: process.env.EMAIL_PASS, // .env se 16-digit App Password lein
+const dummyCourses = [
+  {
+    id: 1,
+    title: "Beginner Sanskrit",
+    description: "Start with Devanagari and core vocabulary.",
+    price: 999,
+    level: "Beginner",
+    duration: "6 weeks",
+    image: { url: "" },
+    category: "Sanskrit",
   },
+  {
+    id: 2,
+    title: "Panini Grammar Mastery",
+    description: "Dive deep into the Ashtadhyayi.",
+    price: 1499,
+    level: "Premium",
+    duration: "12 weeks",
+    image: { url: "" },
+    category: "Grammar",
+  },
+  {
+    id: 3,
+    title: "Spoken Sanskrit",
+    description: "Practice live conversations.",
+    price: 1299,
+    level: "Interactive",
+    duration: "8 weeks",
+    image: { url: "" },
+    category: "Speaking",
+  },
+];
+
+// All courses
+app.get("/course", (req, res) => res.json(dummyCourses));
+app.get("/api/course", (req, res) => res.json(dummyCourses));
+
+// Single course
+app.get("/course/:id", (req, res) => {
+  const course = dummyCourses.find(c => c.id === parseInt(req.params.id)) || dummyCourses[0];
+  res.json(course);
 });
 
-// --- OTP ROUTES ---
-
-// 1. Send OTP API
-app.post("/api/send-otp", async (req, res) => {
-  const { email } = req.body;
-  if (!email)
-    return res
-      .status(400)
-      .json({ success: false, message: "Email is required" });
-
-  const otp = Math.floor(1000 + Math.random() * 9000).toString();
-  otpStore[email] = otp;
-
-  const mailOptions = {
-    from: `"Kaumudi Trust" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: "Enrollment Verification OTP",
-    html: `<h3>Namaste!</h3><p>Aapka verification code hai: <b>${otp}</b></p>`,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: true, message: "OTP sent to email" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to send email" });
-  }
+// Progress
+app.get("/progress/:id", (req, res) => {
+  res.json({ progress: 0, completed: false });
+});
+app.post("/progress/update", (req, res) => {
+  res.json({ success: true });
 });
 
-// 2. Verify OTP API
-app.post("/api/verify-otp", (req, res) => {
-  const { email, otp } = req.body;
-  if (otpStore[email] === otp) {
-    delete otpStore[email];
-    res.status(200).json({ success: true, message: "Verified" });
-  } else {
-    res.status(400).json({ success: false, message: "Invalid OTP" });
-  }
+// Auth
+app.post("/auth/login", (req, res) => {
+  res.json({ token: "dummy-token", role: req.body.role });
+});
+app.post("/auth/student/register", (req, res) => {
+  res.json({ success: true, message: "Registered!" });
 });
 
-// --- SERVER START ---
-connectDB();
-const PORT = config.PORT || 5000;
+// Enrollment
+app.get("/enrollment/my", (req, res) => res.json([]));
+app.get("/enrollment/check/:id", (req, res) => {
+  res.json({ enrolled: false });
+});
 
-app.listen(PORT, () => {
-  console.log(`server is running on http://localhost:${PORT}`);
+// Profile
+app.get("/profile/me", (req, res) => {
+  res.json({ name: "Test User", email: "test@test.com" });
+});
+app.get("/profile/stats", (req, res) => {
+  res.json({ totalCourses: 0, completed: 0 });
+});
+app.get("/profile/enrollments", (req, res) => res.json([]));
+
+// Testimonials
+app.get("/testimonial", (req, res) => res.json([]));
+
+const server = http.createServer(app);
+
+server.listen(8080, () => {
+  console.log("Server running on http://localhost:8080");
 });

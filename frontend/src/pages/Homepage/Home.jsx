@@ -90,7 +90,6 @@ export default function Home() {
           position: "relative",
           width: "100%",
           /* dvh with vh fallback for older iOS */
-          height: "100vh",
           height: "100dvh",
           display: "flex",
           alignItems: "center",

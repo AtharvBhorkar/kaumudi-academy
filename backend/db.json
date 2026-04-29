@@ -1,0 +1,25 @@
+{
+  "course": [
+    {
+      "id": 1,
+      "title": "Beginner Sanskrit",
+      "price": 999,
+      "instructor": "Acharya",
+      "duration": "6 weeks"
+    },
+    {
+      "id": 2,
+      "title": "Panini Grammar Mastery",
+      "price": 1499,
+      "instructor": "Acharya",
+      "duration": "12 weeks"
+    },
+    {
+      "id": 3,
+      "title": "Spoken Sanskrit",
+      "price": 1299,
+      "instructor": "Acharya",
+      "duration": "8 weeks"
+    }
+  ]
+}

@@ -150,7 +150,7 @@ export default function Cards() {
     const fetchCourses = async () => {
       try {
         const res = await getAllCourses();
-        setCourses(res?.data);
+        setCourses(res || []);
       } catch (err) {
         console.error("Failed to fetch courses", err);
       } finally {
@@ -180,9 +180,9 @@ export default function Cards() {
     apply();
     window.addEventListener("resize", apply);
     return () => window.removeEventListener("resize", apply);
-  }, [index, courses.length]);
+  }, [index, (courses || []).length]);
 
-  const visible = courses.slice(index, index + itemsPerSlide);
+  const visible = (courses || []).slice(index, index + itemsPerSlide);
   return (
     <section
       className="pt-2 pb-16 sm:pt-12 sm:pb-20 relative overflow-hidden"
@@ -199,6 +199,7 @@ export default function Cards() {
         {/* HEADER */}
         <div className="flex items-end justify-between mb-14 relative">
           <motion.div
+  className="relative"
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -238,108 +239,11 @@ export default function Cards() {
         </div>
 
         {/* DYNAMIC COURSE CAROUSEL */}
-        <div className="mt-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-8"
-          >
-          </motion.div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {visible.map((course, i) => (
-                <motion.div
-                  key={course._id}
-                  initial={{ opacity: 0, y: 30, scale: 0.94 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{
-                    y: -10,
-                    boxShadow: "16px 16px 36px #c8b09e, -12px -12px 28px #ffffff",
-                    transition: { duration: 0.35 },
-                  }}
-                  className="group rounded-3xl overflow-hidden cursor-pointer"
-                  style={neumoLight}
-                >
-                  {/* Image Container */}
-                  <Link to={`/coursedetail/${course._id}`} className="block">
-                    <div
-                      className="m-3 rounded-2xl overflow-hidden"
-                      style={{
-                        height: "200px",
-                        ...neumoInset,
-                      }}
-                    >
-                      <motion.img
-                        whileHover={{ scale: 1.06 }}
-                        transition={{ duration: 0.5 }}
-                        src={course.image?.url}
-                        alt={course.title}
-                        className="w-full h-full object-cover"
-                        style={{ borderRadius: "1rem", filter: "brightness(0.97) saturate(1.05)" }}
-                      />
-                    </div>
-                  </Link>
-
-                  {/* Content */}
-                  <div className="px-6 pb-6 pt-3">
-                    {/* Badge */}
-                    <div className="mb-3">
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full"
-                        style={{ ...neumoInset, color: "#D19A5B" }}
-                      >
-                        {course.level || "Course"}
-                      </span>
-                    </div>
-
-                    <h3
-                      className="text-lg font-bold mb-2 leading-snug"
-                      style={{ color: "#5A3626", fontFamily: "Georgia, serif" }}
-                    >
-                      {course.title}
-                    </h3>
-
-                    <p
-                      className="text-sm leading-relaxed mb-5 line-clamp-3"
-                      style={{ color: "#A46A3F" }}
-                    >
-                      {course.description}
-                    </p>
-
-                    <Link to={`/coursedetail/${course._id}`}>
-                      <motion.button
-                        whileHover={{
-                          y: -2,
-                          boxShadow: "8px 8px 20px #9a5535, -3px -3px 10px rgba(255,210,160,0.15)",
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
-                        style={{ ...neumoDark, color: "#F2E6D9" }}
-                      >
-                        View Details
-                        <ArrowRight size={14} />
-                      </motion.button>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        
 
         {/* View All CTA */}
         <motion.div
+  className="relative"
           className="flex justify-center mt-5"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

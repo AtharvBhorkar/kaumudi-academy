@@ -12,6 +12,7 @@ import StudentFee from "../models/StudentFee.model.js";
 import { sendCourseEnrollmentSuccessMail } from "../services/mail.service.js";
 import Student from "../models/Student.model.js"
 import { formatEnrollmentId } from "../utils/enrollment.utils.js";
+
 // Helper function price clean karne ke liye (6,499 -> 6499)
 const sanitizePrice = (price) => {
   if (typeof price === "number") return price;
@@ -68,6 +69,7 @@ export const createRazorpayOrder = async (req, res) => {
     } else {
       console.log("CAPTCHA VERIFICATION SKIPPED (development mode or SKIP_CAPTCHA=true)");
     }
+
     // 1. Course find
     const course = await Course.findById(courseId);
     if (!course || course.status !== "ACTIVE") {
@@ -126,14 +128,11 @@ export const createRazorpayOrder = async (req, res) => {
     // Calculate payable amount based on payment mode
     // For EMI: First payment = 1/3 of discounted amount + processing fee (only once)
     // For FULL: Pay the full discounted amount + processing fee
-    // Use 2 decimal places precision
     let finalAmount = discountedAmount;
     if (paymentMode === "EMI") {
-      // First EMI payment includes processing fee
       const emiBase = Math.round((discountedAmount / 3) * 100) / 100;
       finalAmount = emiBase + processingFee;
     } else {
-      // Full payment includes processing fee
       finalAmount = discountedAmount + processingFee;
     }
 
@@ -153,23 +152,36 @@ export const createRazorpayOrder = async (req, res) => {
       receipt: `rcpt_${Date.now()}`
     };
 
-    // Create order with error handling
+    // ── DEMO MODE: generate a fake order when Razorpay keys are not configured ──
     let order;
-    try {
-      order = await razorpay.orders.create(options);
-    } catch (razorpayError) {
-      console.error("RAZORPAY API ERROR:", razorpayError);
-      
-      // Handle specific Razorpay errors
-      if (razorpayError.statusCode === 400) {
-        return res.status(400).json({
+
+    if (!razorpay) {
+      console.warn("Razorpay not initialised – running in DEMO MODE. Using fake order.");
+      order = {
+        id: "fake_order_" + Date.now(),
+        amount: options.amount,
+        currency: options.currency,
+      };
+    } else {
+      try {
+        order = await razorpay.orders.create(options);
+      } catch (razorpayError) {
+        console.error("RAZORPAY API ERROR:", razorpayError);
+
+        if (razorpayError.statusCode === 400) {
+          return res.status(400).json({
+            success: false,
+            message: razorpayError.error?.description || "Invalid payment amount. Please check course pricing."
+          });
+        }
+
+        return res.status(500).json({
           success: false,
-          message: razorpayError.error?.description || "Invalid payment amount. Please check course pricing."
+          message: "Payment gateway error",
         });
       }
-      
-      throw new Error("Payment gateway error: " + razorpayError.error?.description);
     }
+    // ─────────────────────────────────────────────────────────────────────────────
 
     // 5. Payment Create
     console.log("Creating payment for user:", req.user._id, "course:", courseId);
@@ -211,7 +223,7 @@ export const createRazorpayOrder = async (req, res) => {
         amount: finalAmount 
       },
       userId: req.user._id,
-      userRole: "STUDENT"  // Explicitly indicate this is a student action
+      userRole: "STUDENT"
     });
 
     // Build EMI details if EMI mode is selected
@@ -220,11 +232,11 @@ export const createRazorpayOrder = async (req, res) => {
       isEmi: true,
       totalAmount: discountedAmount,
       processingFee: processingFee,
-      firstPayment: emiBase + processingFee, // First payment includes processing fee
-      remainingAmount: discountedAmount - emiBase, // Remaining 2/3 without processing fee
+      firstPayment: emiBase + processingFee,
+      remainingAmount: discountedAmount - emiBase,
       installments: 3,
-      installmentAmount: emiBase, // Each subsequent installment is just the base amount (without processing fee)
-      perMonth: emiBase // Without processing fee
+      installmentAmount: emiBase,
+      perMonth: emiBase
     } : null;
 
     res.json({
@@ -236,7 +248,7 @@ export const createRazorpayOrder = async (req, res) => {
       originalAmount,
       discountAmount,
       discountedAmount,
-      finalAmount: paymentFinalAmount, // Base amount without processing fee
+      finalAmount: paymentFinalAmount,
       processingFee: paymentMode === "EMI" ? processingFee : processingFee,
       emiDetails
     });
@@ -257,19 +269,27 @@ export const verifyRazorpayPayment = async (req, res) => {
       razorpaySignature
     } = req.body;
 
-    const body = razorpayOrderId + "|" + razorpayPaymentId;
+    // ── DEMO MODE: skip signature verification for fake orders ──
+    const isDemoOrder = razorpayOrderId?.startsWith("fake_order_");
 
-    const expectedSignature = crypto
-      .createHmac("sha256", config.RAZORPAY_SECRET)
-      .update(body)
-      .digest("hex");
+    if (!isDemoOrder) {
+      const body = razorpayOrderId + "|" + razorpayPaymentId;
 
-    if (expectedSignature !== razorpaySignature) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment signature"
-      });
+      const expectedSignature = crypto
+        .createHmac("sha256", config.RAZORPAY_SECRET)
+        .update(body)
+        .digest("hex");
+
+      if (expectedSignature !== razorpaySignature) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid payment signature"
+        });
+      }
+    } else {
+      console.warn("DEMO MODE – skipping signature verification for fake order:", razorpayOrderId);
     }
+    // ────────────────────────────────────────────────────────────
 
     const payment = await Payment.findOne({ razorpayOrderId });
 
@@ -288,7 +308,6 @@ export const verifyRazorpayPayment = async (req, res) => {
     console.log("Payment verified - creating enrollment for student:", payment.user, "course:", payment.course);
 
     try {
-      // Enrollment trigger
       await createEnrollment({
         studentId: payment.user,
         courseId: payment.course,
@@ -301,24 +320,20 @@ export const verifyRazorpayPayment = async (req, res) => {
 
     const course = await Course.findById(payment.course);
 
-    // Calculate the actual total after discount (not original price)
     const discountedTotal = payment.originalAmount - payment.discountAmount;
     const remainingAmount = Math.max(discountedTotal - payment.finalAmount, 0);
 
-    // Get enrollment ID for notifications - use student's unique ID
     const student = await Student.findById(payment.user).select('_id createdAt studentId');
     const formattedEnrollmentId = student ? formatEnrollmentId(student._id, student.createdAt) : null;
 
     console.log("Creating/updating StudentFee for student:", payment.user, "course:", payment.course);
 
-    // Check if StudentFee exists for this student and course
     const existingFee = await StudentFee.findOne({
       student: payment.user,
       course: payment.course
     });
 
     if (existingFee) {
-      // Update existing fee record
       existingFee.paidAmount = payment.finalAmount;
       existingFee.remainingAmount = remainingAmount;
       existingFee.payment = payment._id;
@@ -326,17 +341,15 @@ export const verifyRazorpayPayment = async (req, res) => {
       await existingFee.save();
       console.log("StudentFee updated:", existingFee._id);
     } else {
-      // Create new fee record
       await StudentFee.create({
         student: payment.user,
         course: payment.course,
-        totalAmount: discountedTotal, // Use discounted amount as total
+        totalAmount: discountedTotal,
         paidAmount: payment.finalAmount,
-        remainingAmount: remainingAmount, // Calculate remaining correctly
+        remainingAmount: remainingAmount,
         paymentMode: payment.paymentMode,
         payment: payment._id,
-        paymentStatus:
-          payment.paymentMode === "EMI" ? "PARTIAL" : "PAID"
+        paymentStatus: payment.paymentMode === "EMI" ? "PARTIAL" : "PAID"
       });
       console.log("StudentFee created");
     }
@@ -351,7 +364,7 @@ export const verifyRazorpayPayment = async (req, res) => {
       paymentMode: payment.paymentMode
     });
 
-    // 🔔 NOTIFICATION: Payment Success - Notify both Admin and Student
+    // 🔔 NOTIFICATION: Payment Success
     await notifyBoth({
       adminTitle: "Payment Successful",
       adminMessage: `${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : (user.fullName || 'A student')} paid ₹${payment.finalAmount} for ${course.title}`,
@@ -481,7 +494,6 @@ export const createEmiInstallment = async (req, res) => {
       course: courseId
     }).populate("payment").select('_id createdAt');
 
-    // Get student info for enrollment ID
     const student = await Student.findById(studentId).select('_id createdAt studentId');
 
     if (!enrollment) {
@@ -494,7 +506,6 @@ export const createEmiInstallment = async (req, res) => {
     const payment = enrollment.payment;
     const formattedEnrollmentId = student ? formatEnrollmentId(student._id, student.createdAt) : null;
 
-    // Fetch course details for notifications
     const course = await Course.findById(courseId);
 
     if (!payment) {
@@ -504,11 +515,10 @@ export const createEmiInstallment = async (req, res) => {
       });
     }
 
-    // Verify this is an EMI payment - check both paymentMode and payment pattern
-    // Some payments were saved with paymentMode="FULL" but were actually EMI (30% paid)
+    // Verify this is an EMI payment
     const discountedTotal = payment.originalAmount - payment.discountAmount;
     const paidPercentage = discountedTotal > 0 ? (payment.finalAmount / discountedTotal) * 100 : 0;
-    const isEmiPattern = paidPercentage > 0 && paidPercentage < 50; // Paid less than 50% suggests EMI
+    const isEmiPattern = paidPercentage > 0 && paidPercentage < 50;
     
     if (payment.paymentMode !== "EMI" && !isEmiPattern) {
       return res.status(400).json({
@@ -517,7 +527,6 @@ export const createEmiInstallment = async (req, res) => {
       });
     }
 
-    // Check if already fully paid
     const totalPaidSoFar = payment.finalAmount;
     const remainingAmount = discountedTotal - totalPaidSoFar;
 
@@ -528,17 +537,10 @@ export const createEmiInstallment = async (req, res) => {
       });
     }
 
-    // Count how many EMI installments have already been paid
-    // parentPayment.finalAmount starts with the first payment (1/3 + processing fee), then increases with each installment
-    // Note: First payment includes processing fee, subsequent installments don't
     const firstPaymentAmount = Math.round((discountedTotal / 3) * 100) / 100;
     const processingFee = 99;
     const expectedPerInstallment = Math.round((discountedTotal - firstPaymentAmount) / 2 * 100) / 100;
     
-    // Calculate how many installments have been paid (excluding the initial first payment)
-    // After first payment (enrollment): paid = firstPaymentAmount + processingFee (includes processing fee)
-    // After second payment: paid = firstPaymentAmount + processingFee + installmentAmount (2/3)
-    // After third payment: paid = firstPaymentAmount + processingFee + 2*installmentAmount (3/3)
     const amountPaidBeyondFirst = totalPaidSoFar - firstPaymentAmount - processingFee;
     let installmentsPaid = 0;
     if (amountPaidBeyondFirst > 0) {
@@ -555,21 +557,15 @@ export const createEmiInstallment = async (req, res) => {
       remainingAmount
     });
 
-    // Calculate installment amount based on how many installments have been paid
-    // If 0 installments paid beyond first payment → this is 2nd payment (1st installment)
-    // If 1 installment paid beyond first payment → this is 3rd payment (2nd/final installment)
     let installmentAmount;
     if (installmentsPaid >= 2) {
-      // Already paid both installments, shouldn't reach here but safety check
       return res.status(400).json({
         success: false,
         message: "All EMI installments have already been paid"
       });
     } else if (installmentsPaid >= 1) {
-      // This is the 3rd/final payment - pay the full remaining amount
       installmentAmount = remainingAmount;
     } else {
-      // This is the 2nd payment - divide remaining into 2 parts
       installmentAmount = remainingAmount / 2;
     }
     
@@ -582,7 +578,6 @@ export const createEmiInstallment = async (req, res) => {
       installmentAmount
     });
 
-    // Validate amount before creating order (Razorpay max: 10,00,000 INR)
     const maxRazorpayAmount = 1000000;
     if (installmentAmount > maxRazorpayAmount) {
       return res.status(400).json({
@@ -591,25 +586,35 @@ export const createEmiInstallment = async (req, res) => {
       });
     }
 
-    // Create Razorpay order for the installment
     const options = {
       amount: Math.round(installmentAmount * 100),
       currency: "INR",
       receipt: `emi_${Date.now()}`
     };
 
+    // ── DEMO MODE: generate a fake EMI order when Razorpay keys are not configured ──
     let order;
-    try {
-      order = await razorpay.orders.create(options);
-    } catch (razorpayError) {
-      console.error("RAZORPAY EMI INSTALLMENT ERROR:", razorpayError);
-      return res.status(500).json({
-        success: false,
-        message: "Payment gateway error: " + (razorpayError.error?.description || "Failed to create installment order")
-      });
-    }
 
-    // Create a new payment record for this installment
+    if (!razorpay) {
+      console.warn("Razorpay not initialised – running in DEMO MODE. Using fake EMI order.");
+      order = {
+        id: "fake_emi_order_" + Date.now(),
+        amount: options.amount,
+        currency: options.currency,
+      };
+    } else {
+      try {
+        order = await razorpay.orders.create(options);
+      } catch (razorpayError) {
+        console.error("RAZORPAY EMI INSTALLMENT ERROR:", razorpayError);
+        return res.status(500).json({
+          success: false,
+          message: "Payment gateway error",
+        });
+      }
+    }
+    // ──────────────────────────────────────────────────────────────────────────────────
+
     const installmentPayment = await Payment.create({
       user: studentId,
       course: courseId,
@@ -649,7 +654,7 @@ export const createEmiInstallment = async (req, res) => {
       currency: order.currency,
       paymentId: installmentPayment._id,
       remainingAmount: remainingAmount - installmentAmount,
-      installmentNumber: installmentsPaid >= 1 ? 3 : 2, // If already paid 1 installment beyond first, this is the 3rd payment
+      installmentNumber: installmentsPaid >= 1 ? 3 : 2,
       debug: {
         originalAmount: payment.originalAmount,
         discountAmount: payment.discountAmount,
@@ -679,21 +684,28 @@ export const verifyEmiInstallmentPayment = async (req, res) => {
       paymentId
     } = req.body;
 
-    const body = razorpayOrderId + "|" + razorpayPaymentId;
+    // ── DEMO MODE: skip signature verification for fake EMI orders ──
+    const isDemoOrder = razorpayOrderId?.startsWith("fake_emi_order_");
 
-    const expectedSignature = crypto
-      .createHmac("sha256", config.RAZORPAY_SECRET)
-      .update(body)
-      .digest("hex");
+    if (!isDemoOrder) {
+      const body = razorpayOrderId + "|" + razorpayPaymentId;
 
-    if (expectedSignature !== razorpaySignature) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment signature"
-      });
+      const expectedSignature = crypto
+        .createHmac("sha256", config.RAZORPAY_SECRET)
+        .update(body)
+        .digest("hex");
+
+      if (expectedSignature !== razorpaySignature) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid payment signature"
+        });
+      }
+    } else {
+      console.warn("DEMO MODE – skipping signature verification for fake EMI order:", razorpayOrderId);
     }
+    // ────────────────────────────────────────────────────────────────
 
-    // Find the installment payment
     const payment = await Payment.findById(paymentId);
 
     if (!payment) {
@@ -703,12 +715,10 @@ export const verifyEmiInstallmentPayment = async (req, res) => {
       });
     }
 
-    // Get course and student for notifications
     const course = await Course.findById(payment.course);
     const studentId = payment.user;
     const courseId = payment.course;
 
-    // Get enrollment ID for notifications - use student's unique ID
     const enrollment = await Enrollment.findOne({ student: studentId, course: courseId }).select('_id createdAt');
     const student = await Student.findById(studentId).select('_id createdAt studentId');
     const formattedEnrollmentId = student ? formatEnrollmentId(student._id, student.createdAt) : null;
@@ -718,14 +728,12 @@ export const verifyEmiInstallmentPayment = async (req, res) => {
     payment.razorpaySignature = razorpaySignature;
     await payment.save();
 
-    // Update the parent payment's paid amount
     let newRemaining = 0;
     const parentPayment = await Payment.findById(payment.parentPayment);
     if (parentPayment) {
       parentPayment.finalAmount += payment.finalAmount;
       await parentPayment.save();
 
-      // Update StudentFee record
       const discountedTotal = parentPayment.originalAmount - parentPayment.discountAmount;
       newRemaining = discountedTotal - parentPayment.finalAmount;
 
@@ -739,10 +747,9 @@ export const verifyEmiInstallmentPayment = async (req, res) => {
       );
     }
 
-    // 🔔 NOTIFICATION: EMI Installment Success - Notify both Admin and Student
+    // 🔔 NOTIFICATION: EMI Installment Success
     const courseName = course ? course.title : "the course";
     
-    // Get parent payment details for total calculation
     const parentPaymentData = parentPayment ? await Payment.findById(payment.parentPayment) : null;
     const totalPrice = parentPaymentData?.originalAmount || payment.originalAmount;
     const totalPaid = parentPaymentData?.finalAmount || payment.finalAmount;
