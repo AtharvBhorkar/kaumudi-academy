@@ -226,21 +226,46 @@ const CSS = `
 }
 .k-col2 { grid-column: span 2; }
 
-.k-main-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
-@media(min-width:1024px) { .k-main-grid { grid-template-columns: 1fr 1fr; } }
+.k-main-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+@media(min-width:1024px) { .k-main-grid { grid-template-columns: 1fr 1fr; gap: 3rem; } }
 
 .k-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-@media(max-width:640px) { .k-info-grid { grid-template-columns: 1fr; } }
-
+@media(max-width:640px) { .k-info-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
 /* ── Responsive overrides ── */
-@media(max-width:768px) {
-  .k-contact-strip-grid { grid-template-columns: 1fr !important; }
-  .k-follow-row { flex-wrap: wrap; justify-content: center; }
+
+/* Tablet (max 1023px) */
+@media(max-width:1023px) {
+  .k-card { padding: 2rem !important; }
+  .k-info-card { padding: 1.5rem; }
 }
-@media(max-width:480px) {
-  .k-card { border-radius: 1.2rem; }
-  .k-info-card { padding: 1.25rem; }
+
+/* Mobile landscape & small tablet (max 768px) */
+@media(max-width:768px) {
+  .k-contact-strip-grid { grid-template-columns: repeat(3,1fr) !important; gap: .6rem !important; }
+  .k-follow-row { flex-wrap: wrap; justify-content: center; }
+  .k-hero-badge-text { font-size: 1.4em !important; letter-spacing: .15em !important; }
+}
+
+/* Mobile portrait (max 640px) */
+@media(max-width:640px) {
+  .k-card { padding: 1.4rem !important; border-radius: 1.2rem; }
+  .k-info-card { padding: 1.1rem; border-radius: 1.1rem; }
+  .k-btn { padding: 13px 20px; font-size: .74rem; }
+  .k-input { padding: 11px 14px; font-size: .9rem; }
+  .k-social { width: 44px; height: 44px; }
+  .k-contact-strip-grid { grid-template-columns: 1fr !important; gap: .75rem !important; text-align: left !important; }
+  .k-contact-strip-item { display: flex !important; align-items: center !important; gap: .75rem !important; }
+  .k-contact-strip-icon { display: inline !important; margin: 0 !important; }
+}
+
+/* Extra small (max 380px) */
+@media(max-width:380px) {
+  .k-card { padding: 1.1rem !important; }
+  .k-info-card { padding: .9rem; }
+  .k-form-grid { gap: .9rem; }
+  .k-main-grid { gap: 1.5rem; }
+  .k-btn { font-size: .7rem; padding: 12px 16px; }
 }
 
 /* Divider line */
@@ -539,8 +564,8 @@ export default function Contact() {
               position: "absolute",
               top: "-4rem",
               right: "-4rem",
-              width: 340,
-              height: 340,
+              width: "clamp(160px,30vw,340px)",
+              height: "clamp(160px,30vw,340px)",
               opacity: 0.14,
               pointerEvents: "none",
               zIndex: 2,
@@ -555,8 +580,8 @@ export default function Contact() {
               position: "absolute",
               bottom: "-3rem",
               left: "-3rem",
-              width: 260,
-              height: 260,
+              width: "clamp(120px,22vw,260px)",
+              height: "clamp(120px,22vw,260px)",
               opacity: 0.11,
               pointerEvents: "none",
               zIndex: 2,
@@ -574,7 +599,7 @@ export default function Contact() {
               position: "relative",
               zIndex: 3,
               textAlign: "center",
-              padding: "5rem 1.5rem",
+              padding: "clamp(2.5rem,8vw,5rem) clamp(1rem,4vw,2rem)",
             }}
           >
             {/* Badge row */}
@@ -594,7 +619,7 @@ export default function Contact() {
               <span
                 style={{
                   fontSize: "3em",
-                  letterSpacing: ".25em",
+                  letterSpacing: "clamp(.1em, 1vw, .25em)",
                   color: "#e1b27c",
                   fontWeight: 700,
                   textTransform: "uppercase",
@@ -698,8 +723,8 @@ export default function Contact() {
             position: "relative",
             width: "100%",
             background: `linear-gradient(160deg, ${C.cream} 0%, #e8d5c0 40%, #dfc8aa 70%, #d4b890 100%)`,
-            paddingTop: "5rem",
-            paddingBottom: "7rem",
+            paddingTop: "clamp(2.5rem,6vw,5rem)",
+            paddingBottom: "clamp(4rem,10vw,7rem)",
             overflow: "hidden",
             marginBottom: "-6rem",
           }}
@@ -775,7 +800,7 @@ export default function Contact() {
               position: "relative",
               maxWidth: "80rem",
               margin: "0 auto",
-              padding: "0 1.5rem",
+              padding: "0 clamp(1rem,4vw,1.5rem)",
             }}
           >
             {/* ── 2-col grid ── */}
@@ -793,7 +818,7 @@ export default function Contact() {
                   transition={{ type: "spring", stiffness: 200, damping: 18 }}
                   className="k-card"
                   style={{
-                    padding: "2.5rem",
+                    padding: "clamp(1.4rem,4vw,2.5rem)",
                     position: "relative",
                     overflow: "hidden",
                   }}
@@ -1164,7 +1189,9 @@ export default function Contact() {
                   whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 200, damping: 18 }}
                   className="k-card"
-                  style={{ padding: "1.5rem 2rem" }}
+                  style={{
+                    padding: "clamp(1rem,3vw,1.5rem) clamp(1rem,3vw,2rem)",
+                  }}
                 >
                   <div
                     className="k-contact-strip-grid"
@@ -1180,36 +1207,39 @@ export default function Contact() {
                       { I: Mail, label: "Email", val: "ksacademy@gmail.com" },
                       { I: MapPin, label: "Visit", val: "Kadi, Gujarat" },
                     ].map((x, i) => (
-                      <div key={i}>
+                      <div key={i} className="k-contact-strip-item">
                         <x.I
                           size={18}
+                          className="k-contact-strip-icon"
                           style={{
                             color: C.dark,
                             display: "block",
                             margin: "0 auto 6px",
                           }}
                         />
-                        <p
-                          style={{
-                            fontSize: ".6rem",
-                            letterSpacing: ".2em",
-                            fontWeight: 700,
-                            color: C.terracotta,
-                            marginBottom: 4,
-                            textTransform: "uppercase",
-                          }}
-                        >
-                          {x.label}
-                        </p>
-                        <p
-                          style={{
-                            fontSize: ".73rem",
-                            fontWeight: 500,
-                            color: "rgba(90,54,38,.62)",
-                          }}
-                        >
-                          {x.val}
-                        </p>
+                        <div>
+                          <p
+                            style={{
+                              fontSize: ".6rem",
+                              letterSpacing: ".2em",
+                              fontWeight: 700,
+                              color: C.terracotta,
+                              marginBottom: 4,
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {x.label}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: ".73rem",
+                              fontWeight: 500,
+                              color: "rgba(90,54,38,.62)",
+                            }}
+                          >
+                            {x.val}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
