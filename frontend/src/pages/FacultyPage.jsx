@@ -221,9 +221,9 @@ const FacultyPage = () => {
         - Added w-screen to video and overlays to guarantee full width
         - Used h-full on inner motion div so content stays centered in full height
       */}
-      <section
-        className="relative min-h-screen w-full flex items-center justify-center text-center overflow-hidden py-20 sm:py-24 md:py-0"
-      >
+     <section
+  className="relative w-full min-h-screen flex items-center justify-center text-center overflow-hidden"
+>
         {/* Background Video — covers exactly 100vh × 100vw */}
         <video
           autoPlay
@@ -285,13 +285,13 @@ const FacultyPage = () => {
         />
 
         {/* Hero Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 45 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-          className="relative max-w-3xl px-4 sm:px-6"
-          style={{ zIndex: 10 }}
-        >
+      <motion.div
+  initial={{ opacity: 0, y: 45 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.9, ease: "easeOut" }}
+  className="relative w-full max-w-3xl px-4 sm:px-6 mx-auto"
+  style={{ zIndex: 10 }}
+>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -319,7 +319,7 @@ const FacultyPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.35 }}
-            className="mt-5 font-serif text-3xl sm:text-4xl md:text-6xl font-extrabold text-white leading-snug sm:leading-tight"
+            className="mt-5 font-serif text-4xl md:text-6xl font-extrabold text-white leading-tight"
           >
             Guided by Tradition <br />
             <span className="italic" style={{
@@ -369,14 +369,14 @@ const FacultyPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.88 }}
-            className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-5"
+            className="mt-10 flex flex-row justify-center gap-2 sm:gap-5"
           >
             <Link to="/allcourses">
               <motion.span
                 whileHover={{ scale: 1.06, y: -3, boxShadow: "0 20px 50px rgba(214,177,92,0.35), 0 4px 16px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.22)", background: "rgba(214, 177, 92, 0.22)", borderColor: "rgba(214, 177, 92, 0.75)" }}
                 whileTap={{ scale: 0.96, y: 0 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className="btn-shine relative inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-full font-bold cursor-pointer overflow-hidden text-sm sm:text-base"
+                className="btn-shine relative inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-8 sm:py-4 rounded-full font-bold cursor-pointer overflow-hidden text-sm sm:text-base"
                 style={{ background: "rgba(214, 177, 92, 0.13)", border: "1px solid rgba(210, 154, 23, 0.55)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", color: "#d6b15c", boxShadow: "0 16px 32px rgba(214,177,92,0.13), 0 2px 8px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.15)", transition: "background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease", whiteSpace: "nowrap" }}
               >
                 <span className="absolute inset-0 rounded-full pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 50%, transparent 100%)" }} />
@@ -390,7 +390,7 @@ const FacultyPage = () => {
                 whileHover={{ scale: 1.06, y: -3, boxShadow: "0 20px 50px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.16)", background: "rgba(123, 72, 51, 0.45)", borderColor: "rgba(236, 177, 38, 0.55)" }}
                 whileTap={{ scale: 0.96, y: 0 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className="btn-shine relative inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-full font-bold cursor-pointer overflow-hidden text-sm sm:text-base"
+                className="btn-shine relative inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-8 sm:py-4 rounded-full font-bold cursor-pointer overflow-hidden text-sm sm:text-base"
                 style={{ background: "rgba(123, 72, 51, 0.3)", border: "1px solid rgba(236, 177, 38, 0.35)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", color: "#e8d5a3", boxShadow: "0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.10)", transition: "background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease", whiteSpace: "nowrap" }}
               >
                 <span className="absolute inset-0 rounded-full pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 50%, transparent 100%)" }} />
